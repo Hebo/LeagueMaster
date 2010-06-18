@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using WindowsInput;
 
 namespace LeagueMaster
 {
@@ -33,22 +34,21 @@ namespace LeagueMaster
         {
             Base.Write("Bot Initialized");
             GetStatus();
-            PrintStatus();
 
-
+            System.Threading.Timer afkTimer = null;
             int ticks = 0;
             while (true)
             { 
                 Thread.Sleep(5000);
                 statusType oldStatus = status;
                 GetStatus();
-                AntiAfk(gameWindowDimensions);
+                
+                Base.Write(ticks);
 
-                System.Threading.Timer afkTimer = null;
-
-                if (!status.Equals(oldStatus) || ticks == 300)
+                //Ticks in the event one of our clicks does not register
+                if (ticks == 0 || ticks == 20 || !oldStatus.Equals(status))
                 {
-                    PrintStatus();
+                    GetStatus(true);
                     //dispose of timers
                     if (afkTimer != null) afkTimer.Dispose();
 
@@ -56,26 +56,31 @@ namespace LeagueMaster
                     {
                         if (status.GameStatus == GameStatusType.InProgress)
                         {
-                            //start timers
-                            //do mouse stuff
-                            Base.Write("Starting anti-afk mouse movement");
-                            afkTimer = new System.Threading.Timer(AntiAfk, null, 500, 1000);
-                            AntiAfk(gameWindowDimensions);
-                            //wait
+                            Base.Write("Starting/Resuming Anti-afk mouse movement in 5 seconds");
+                            ActivateApplication(Base.gameName);
+                            afkTimer = new System.Threading.Timer(AntiAfk, null, 5000, 1000);
                         }
                         else
-                        {
+                        { //in victory or defeat game screens
+                            Base.Write("Leaving game screen...");
                             Cursor.Position = new Point(gameWindowDimensions.Left + 706, gameWindowDimensions.Top + 586);
-                            DoRightMouseClick();
+                            ActivateApplication(Base.gameName);
+                            Thread.Sleep(1000);
+                            new InputSimulator().Mouse.LeftButtonClick();
                         }
                     }
                     else
-                    {
-                        //client stuff
+                    { //in score or main client screens
+                        Base.Write("Clicking \"Play Again\" in five seconds");
+                        Cursor.Position = new Point(clientWindowDimensions.Left + 1155, clientWindowDimensions.Top + 743);
+                        ActivateApplication(Base.clientName);
+                        Thread.Sleep(5000);
+                        new InputSimulator().Mouse.LeftButtonClick();
                     }
+                   ticks = 1;
                 }
                 ticks = ticks + 1;
-            }
+            }   
         }
 
         static void AntiAfk(object state)
@@ -85,26 +90,25 @@ namespace LeagueMaster
             {
                 case 1:
                     Cursor.Position = new Point(gameWindowDimensions.Left + 530, gameWindowDimensions.Top + 440);
-                    DoRightMouseClick();
+                    new InputSimulator().Mouse.RightButtonClick();
                     break;
                 case 2:
                     Cursor.Position = new Point(gameWindowDimensions.Left + 820, gameWindowDimensions.Top + 420);
-                    DoRightMouseClick();
+                    new InputSimulator().Mouse.RightButtonClick();
                     break;
                 case 3:
                     Cursor.Position = new Point(gameWindowDimensions.Left + 735, gameWindowDimensions.Top + 350);
-                    DoRightMouseClick();
+                    new InputSimulator().Mouse.RightButtonClick();
                     break;
                 case 4:
                     Cursor.Position = new Point(gameWindowDimensions.Left + 730, gameWindowDimensions.Top + 450);
-                    DoRightMouseClick();
+                    new InputSimulator().Mouse.RightButtonClick();
                     break;
             }
-             
         }
 
 
-        public static bool GetStatus()
+        public static bool GetStatus( bool print = false )
         {
 
             if (Base.IsProcessOpen(Base.gameName))
@@ -117,7 +121,7 @@ namespace LeagueMaster
             else
             {
                 clientWindowHandle = GetWindowHandle(Base.clientName);
-                Win32.GetWindowRect(gameWindowHandle, out clientWindowDimensions);
+                Win32.GetWindowRect(clientWindowHandle, out clientWindowDimensions);
                 //Console.Write("Client: Handle " + clientWindowHandle + " @ " + clientWindowDimensions.Left + "*" + clientWindowDimensions.Top + "\n");
                 status.WindowStatus = WindowStatusType.Client;
             }
@@ -128,14 +132,28 @@ namespace LeagueMaster
                 if (Screen.testScreen("defeat", gameWindowDimensions))
                 {
                     status.GameStatus = GameStatusType.Ended;
+                    if (print)
+                    {
+                        Base.Write("Game Over: Defeat!", ConsoleColor.Yellow);
+                    }
+
                 }
                 else if (Screen.testScreen("victory", gameWindowDimensions))
                 {
                     status.GameStatus = GameStatusType.Ended;
+                    if (print)
+                    {
+                       Base.Write("Game Over: Victory!", ConsoleColor.Yellow);
+                    }
+                    
                 }
                 else
                 {
                     status.GameStatus = GameStatusType.InProgress;
+                    if (print)
+                    {
+                        Base.Write("Game in progress", ConsoleColor.Yellow);
+                    }
                 }
 
             }
@@ -144,14 +162,18 @@ namespace LeagueMaster
                 if (true)
                 {
                     status.ClientStatus = ClientStatusType.Queue;
+                    if (print)
+                    {
+                        Base.Write("In game client, location unknown", ConsoleColor.Yellow);
+                    }
                 }
-                else if (false)
+                else if (false) //todo
 	            {
                     status.ClientStatus = ClientStatusType.ScoreScreen;
             	}
                 else
                 {
-                    status.ClientStatus = ClientStatusType.ScoreScreen;
+                    status.ClientStatus = ClientStatusType.Unqueued;
                 }
 
             }
@@ -161,52 +183,6 @@ namespace LeagueMaster
             return true;
         }
 
-        public static void PrintStatus()
-        {
-            if (GetStatus())
-            {
-                if (status.WindowStatus == WindowStatusType.Game)
-                {
-                    if (status.GameStatus == GameStatusType.Ended)
-                    {
-                        if (Screen.testScreen("defeat", gameWindowDimensions))
-                        {
-                            Base.Write("Game Over: Defeat!", ConsoleColor.White);
-                        }
-                        else
-                        {
-                            Base.Write("Game Over: Victory!", ConsoleColor.White);
-                        }
-                    }
-                    else
-                    {
-                        Base.Write("Game in Progress");
-                    }
-                }
-                else
-                {
-                    if (status.ClientStatus == ClientStatusType.Queue)
-                    {
-                        Base.Write("Client: In match queue");
-                    }
-                    else if (status.ClientStatus == ClientStatusType.Unqueued)
-                    {
-                        Base.Write("Client: Not In match queue");
-                    }
-                    else
-                    {
-                        Base.Write("Client: Score Screen");
-                    }
-                }
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Error: Unable to read status");
-                Base.ResetConsoleColor();
-            }
-        }
-
         static IntPtr GetWindowHandle( string name )
         {
             Process[] processes = Process.GetProcessesByName(name);
@@ -214,28 +190,27 @@ namespace LeagueMaster
             return pFoundWindow;
         }
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-        public static extern void mouse_event(long dwFlags, long dx, long dy, long cButtons, long dwExtraInfo);
 
-        private const int MOUSEEVENTF_LEFTDOWN = 0x02;
-        private const int MOUSEEVENTF_LEFTUP = 0x04;
-        private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
-        private const int MOUSEEVENTF_RIGHTUP = 0x10;
+        // Sets the window to be foreground
+        [DllImport("User32")]
+        private static extern int SetForegroundWindow(IntPtr hwnd);
 
-        static void DoMouseClick()
+        // Activate or minimize a window
+        [DllImportAttribute("User32.DLL")]
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        private const int SW_SHOW = 5;
+        private const int SW_MINIMIZE = 6;
+        private const int SW_RESTORE = 9;
+
+        private void ActivateApplication(string briefAppName)
         {
-            //Call the imported function with the cursor's current position
-            int X = Cursor.Position.X;
-            int Y = Cursor.Position.Y;
-            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, X, Y, 0, 0);
-        }
-        static void DoRightMouseClick()
-        {
-            //Call the imported function with the cursor's current position
-            int X = Cursor.Position.X;
-            int Y = Cursor.Position.Y;
-            mouse_event(MOUSEEVENTF_RIGHTDOWN | MOUSEEVENTF_RIGHTUP, X, Y, 0, 0);
-        }
+            Process[] procList = Process.GetProcessesByName(briefAppName);
 
+            if (procList.Length > 0)
+            {
+                ShowWindow(procList[0].MainWindowHandle, SW_RESTORE);
+                SetForegroundWindow(procList[0].MainWindowHandle);
+            }
+        }
     }
 }

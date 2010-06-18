@@ -51,6 +51,12 @@
     <Compile Include="Screen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WindowsInput\WindowsInput.csproj">
+      <Project>{3549CD6F-80F8-450F-B99E-CF0A736B1F2A}</Project>
+      <Name>WindowsInput</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
