@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace LeagueMaster
 {
@@ -34,18 +35,22 @@ namespace LeagueMaster
             GetStatus();
             PrintStatus();
 
+
+            int ticks = 0;
             while (true)
             { 
-                Thread.Sleep(1000);
+                Thread.Sleep(5000);
                 statusType oldStatus = status;
                 GetStatus();
+                AntiAfk(gameWindowDimensions);
 
-                if (!status.Equals(oldStatus))
+                System.Threading.Timer afkTimer = null;
+
+                if (!status.Equals(oldStatus) || ticks == 300)
                 {
                     PrintStatus();
                     //dispose of timers
-
-
+                    if (afkTimer != null) afkTimer.Dispose();
 
                     if (status.WindowStatus == WindowStatusType.Game)
                     {
@@ -53,11 +58,15 @@ namespace LeagueMaster
                         {
                             //start timers
                             //do mouse stuff
+                            Base.Write("Starting anti-afk mouse movement");
+                            afkTimer = new System.Threading.Timer(AntiAfk, null, 500, 1000);
+                            AntiAfk(gameWindowDimensions);
                             //wait
                         }
                         else
                         {
-                            //click end game
+                            Cursor.Position = new Point(gameWindowDimensions.Left + 706, gameWindowDimensions.Top + 586);
+                            DoRightMouseClick();
                         }
                     }
                     else
@@ -65,12 +74,35 @@ namespace LeagueMaster
                         //client stuff
                     }
                 }
-
+                ticks = ticks + 1;
             }
-            
-
-            
         }
+
+        static void AntiAfk(object state)
+        {
+            Random rand = new Random();
+            switch (rand.Next(1, 4))
+            {
+                case 1:
+                    Cursor.Position = new Point(gameWindowDimensions.Left + 530, gameWindowDimensions.Top + 440);
+                    DoRightMouseClick();
+                    break;
+                case 2:
+                    Cursor.Position = new Point(gameWindowDimensions.Left + 820, gameWindowDimensions.Top + 420);
+                    DoRightMouseClick();
+                    break;
+                case 3:
+                    Cursor.Position = new Point(gameWindowDimensions.Left + 735, gameWindowDimensions.Top + 350);
+                    DoRightMouseClick();
+                    break;
+                case 4:
+                    Cursor.Position = new Point(gameWindowDimensions.Left + 730, gameWindowDimensions.Top + 450);
+                    DoRightMouseClick();
+                    break;
+            }
+             
+        }
+
 
         public static bool GetStatus()
         {
@@ -94,6 +126,10 @@ namespace LeagueMaster
             {
                 //start ocring to figure out wtf
                 if (Screen.testScreen("defeat", gameWindowDimensions))
+                {
+                    status.GameStatus = GameStatusType.Ended;
+                }
+                else if (Screen.testScreen("victory", gameWindowDimensions))
                 {
                     status.GameStatus = GameStatusType.Ended;
                 }
@@ -178,6 +214,28 @@ namespace LeagueMaster
             return pFoundWindow;
         }
 
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        public static extern void mouse_event(long dwFlags, long dx, long dy, long cButtons, long dwExtraInfo);
+
+        private const int MOUSEEVENTF_LEFTDOWN = 0x02;
+        private const int MOUSEEVENTF_LEFTUP = 0x04;
+        private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
+        private const int MOUSEEVENTF_RIGHTUP = 0x10;
+
+        static void DoMouseClick()
+        {
+            //Call the imported function with the cursor's current position
+            int X = Cursor.Position.X;
+            int Y = Cursor.Position.Y;
+            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, X, Y, 0, 0);
+        }
+        static void DoRightMouseClick()
+        {
+            //Call the imported function with the cursor's current position
+            int X = Cursor.Position.X;
+            int Y = Cursor.Position.Y;
+            mouse_event(MOUSEEVENTF_RIGHTDOWN | MOUSEEVENTF_RIGHTUP, X, Y, 0, 0);
+        }
 
     }
 }

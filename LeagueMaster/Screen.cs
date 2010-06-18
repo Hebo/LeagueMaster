@@ -17,7 +17,7 @@ namespace LeagueMaster
                 //add offset in window to window's location on screen
                 Color sample = Win32.GetPixelColor(dimensions.Left + pix.relativeX, dimensions.Top + pix.relativeY);
 
-                //Console.WriteLine(sample.ToString() + "@" + dimensions.Left + pix.relativeX + "x" + dimensions.Top + pix.relativeY + " v " + pix.pixelColor.ToString());
+                Console.WriteLine(sample.ToString() + "@" + (dimensions.Left + pix.relativeX) + "x" + (dimensions.Top + pix.relativeY) + " v " + pix.pixelColor.ToString());
                 if (sample != pix.pixelColor)
                 {
                     return false;
@@ -32,7 +32,7 @@ namespace LeagueMaster
         {
             //middle of E on defeat screen
             {"defeat", new PatternType[] { new PatternType(631, 251, Color.FromArgb(170, 3, 3)) }},
-            {"dosng", new PatternType[] { new PatternType(631, 251, Color.FromArgb(170, 3, 3)) }},
+            {"victory", new PatternType[] { new PatternType(692, 310, Color.FromArgb(255, 254, 106)) }}, //T in victory
         };
 
 
