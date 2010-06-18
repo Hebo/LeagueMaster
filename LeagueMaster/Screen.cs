@@ -14,10 +14,13 @@ namespace LeagueMaster
 
             foreach (PatternType pix in scr)
             {
-                //add offset in window to window's location on screen
-                Color sample = Win32.GetPixelColor(dimensions.Left + pix.relativeX, dimensions.Top + pix.relativeY);
+                int x = (int)((double)dimensions.Width * pix.xPct);
+                int y = (int)((double)dimensions.Height * pix.yPct);
 
-                //Console.WriteLine(sample.ToString() + "@" + (dimensions.Left + pix.relativeX) + "x" + (dimensions.Top + pix.relativeY) + " v " + pix.pixelColor.ToString());
+                //add offset in window to window's location on screen
+                Color sample = Win32.GetPixelColor(dimensions.Left + x, dimensions.Top + y);
+
+               //Console.WriteLine(sample.ToString() + "@" + (dimensions.Left + pix.relativeX) + "x" + (dimensions.Top + pix.relativeY) + " v " + pix.pixelColor.ToString());
                 if (sample != pix.pixelColor)
                 {
                     return false;
@@ -31,22 +34,26 @@ namespace LeagueMaster
             = new Dictionary<string, PatternType[]> 
         {
             //middle of E on defeat screen
-            {"defeat", new PatternType[] { new PatternType(631, 251, Color.FromArgb(170, 3, 3)) }},
-            {"victory", new PatternType[] { new PatternType(692, 310, Color.FromArgb(255, 244, 106)) }}, //T in victory
+            {"defeat", new PatternType[] { new PatternType(0.438194444, 0.278888889, Color.FromArgb(170, 3, 3)) }},
+            {"victory", new PatternType[] { new PatternType(0.540625, 0.3875, Color.FromArgb(255, 244, 106)) }}, //T in victory
+            
+            {"score", new PatternType[] {   new PatternType(0.56640625, 0.875, Color.FromArgb(255, 255, 255)),
+                                            new PatternType(0.57421875, 0.875, Color.FromArgb(255, 255, 255))
+                                      }}, //chat input box
         };
 
 
 
         class PatternType
         {
-            public int relativeX;
-            public int relativeY;
+            public double xPct;
+            public double yPct;
             public Color pixelColor;
 
-            public PatternType(int x, int y, Color col)
+            public PatternType(double x, double y, Color col)
             {
-                relativeX = x;
-                relativeY = y;
+                xPct = x;
+                yPct = y;
                 pixelColor = col;
             }
         }

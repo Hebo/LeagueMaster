@@ -42,8 +42,6 @@ namespace LeagueMaster
                 Thread.Sleep(5000);
                 statusType oldStatus = status;
                 GetStatus();
-                
-                Base.Write(ticks);
 
                 //Ticks in the event one of our clicks does not register
                 if (ticks == 0 || ticks == 20 || !oldStatus.Equals(status))
@@ -57,25 +55,38 @@ namespace LeagueMaster
                         if (status.GameStatus == GameStatusType.InProgress)
                         {
                             Base.Write("Starting/Resuming Anti-afk mouse movement in 5 seconds");
-                            ActivateApplication(Base.gameName);
-                            afkTimer = new System.Threading.Timer(AntiAfk, null, 5000, 1000);
+                            //ActivateApplication(Base.gameName);
+                            afkTimer = new System.Threading.Timer(AntiAfk, null, 5000, 10000);
                         }
                         else
                         { //in victory or defeat game screens
                             Base.Write("Leaving game screen...");
-                            Cursor.Position = new Point(gameWindowDimensions.Left + 706, gameWindowDimensions.Top + 586);
-                            ActivateApplication(Base.gameName);
+
+                            Cursor.Position = RelativePoint(gameWindowDimensions, 0.504285714, 0.631111111);
+                            //ActivateApplication(Base.gameName);
                             Thread.Sleep(1000);
                             new InputSimulator().Mouse.LeftButtonClick();
                         }
                     }
                     else
-                    { //in score or main client screens
-                        Base.Write("Clicking \"Play Again\" in five seconds");
-                        Cursor.Position = new Point(clientWindowDimensions.Left + 1155, clientWindowDimensions.Top + 743);
-                        ActivateApplication(Base.clientName);
-                        Thread.Sleep(5000);
-                        new InputSimulator().Mouse.LeftButtonClick();
+                    {
+
+                        if (status.ClientStatus == ClientStatusType.ScoreScreen)
+                        {
+                            Base.Write("Clearing Dialogs");
+
+                            new InputSimulator().Mouse.LeftButtonClick();
+
+                            Base.Write("Clicking \"Play Again\" in five seconds");
+                            Cursor.Position = RelativePoint(clientWindowDimensions, 0.90625, 0.93125);
+                            ActivateApplication(Base.clientName);
+                            Thread.Sleep(5000);
+                            new InputSimulator().Mouse.LeftButtonClick(); 
+                        }
+                        else
+                        {
+                            //queued, do nothing but wait
+                        }
                     }
                    ticks = 1;
                 }
@@ -89,19 +100,19 @@ namespace LeagueMaster
             switch (rand.Next(1, 4))
             {
                 case 1:
-                    Cursor.Position = new Point(gameWindowDimensions.Left + 530, gameWindowDimensions.Top + 440);
+                    Cursor.Position = RelativePoint(gameWindowDimensions, 0.368055556, 0.488888889);
                     new InputSimulator().Mouse.RightButtonClick();
                     break;
                 case 2:
-                    Cursor.Position = new Point(gameWindowDimensions.Left + 820, gameWindowDimensions.Top + 420);
+                    Cursor.Position = RelativePoint(gameWindowDimensions, 0.569444444, 0.466666667);;
                     new InputSimulator().Mouse.RightButtonClick();
                     break;
                 case 3:
-                    Cursor.Position = new Point(gameWindowDimensions.Left + 735, gameWindowDimensions.Top + 350);
+                    Cursor.Position = RelativePoint(gameWindowDimensions, 0.510416667, 0.388888889);
                     new InputSimulator().Mouse.RightButtonClick();
                     break;
                 case 4:
-                    Cursor.Position = new Point(gameWindowDimensions.Left + 730, gameWindowDimensions.Top + 450);
+                    Cursor.Position = RelativePoint(gameWindowDimensions, 0.506944444, 0.5);
                     new InputSimulator().Mouse.RightButtonClick();
                     break;
             }
@@ -159,21 +170,25 @@ namespace LeagueMaster
             }
             else
             {
-                if (true)
+                if (Screen.testScreen("score", clientWindowDimensions))
                 {
-                    status.ClientStatus = ClientStatusType.Queue;
+                    status.ClientStatus = ClientStatusType.ScoreScreen;  
                     if (print)
                     {
-                        Base.Write("In game client, location unknown", ConsoleColor.Yellow);
+                        Base.Write("In game client: Score Screen", ConsoleColor.White);
                     }
                 }
                 else if (false) //todo
 	            {
-                    status.ClientStatus = ClientStatusType.ScoreScreen;
+                    status.ClientStatus = ClientStatusType.Unqueued;
             	}
                 else
                 {
-                    status.ClientStatus = ClientStatusType.Unqueued;
+                    status.ClientStatus = ClientStatusType.Queue;
+                    if (print)
+                    {
+                        Base.Write("In game client: Queued", ConsoleColor.White);
+                    }
                 }
 
             }
@@ -190,7 +205,19 @@ namespace LeagueMaster
             return pFoundWindow;
         }
 
+        static public Point RelativePoint(RECT dimensions, double xPct, double yPct)
+        {
+            Base.Write("Width:" + dimensions.Width + "*" + xPct);
+            int x = (int)((double)dimensions.Width * xPct);
+            int y = (int)((double)dimensions.Height * yPct);
 
+            var abolutePoint = new Point(dimensions.Left + x, dimensions.Top + y);
+
+            Base.Write("Calculated:" + abolutePoint.ToString());
+            return abolutePoint;
+        }
+
+        #region P/Invoke
         // Sets the window to be foreground
         [DllImport("User32")]
         private static extern int SetForegroundWindow(IntPtr hwnd);
@@ -212,5 +239,6 @@ namespace LeagueMaster
                 SetForegroundWindow(procList[0].MainWindowHandle);
             }
         }
+        #endregion
     }
 }
