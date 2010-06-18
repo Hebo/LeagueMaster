@@ -36,6 +36,8 @@ namespace LeagueMaster
             GetStatus();
 
             System.Threading.Timer afkTimer = null;
+            System.Threading.Timer surrenderTimer = null;
+
             int ticks = 0;
             while (true)
             { 
@@ -49,14 +51,16 @@ namespace LeagueMaster
                     GetStatus(true);
                     //dispose of timers
                     if (afkTimer != null) afkTimer.Dispose();
+                    if (surrenderTimer != null) surrenderTimer.Dispose();
 
                     if (status.WindowStatus == WindowStatusType.Game)
                     {
                         if (status.GameStatus == GameStatusType.InProgress)
                         {
-                            Base.Write("Starting/Resuming Anti-afk mouse movement in 5 seconds");
+                            Base.Write("Re-Starting Anti-AFK & Auto-Surrender in five seconds");
                             //ActivateApplication(Base.gameName);
                             afkTimer = new System.Threading.Timer(AntiAfk, null, 5000, 10000);
+                            surrenderTimer = new System.Threading.Timer(AttemptSurrender, null, 10000, 35000);
                         }
                         else
                         { //in victory or defeat game screens
@@ -117,7 +121,14 @@ namespace LeagueMaster
                     break;
             }
         }
-
+        static void AttemptSurrender(object state)
+        {
+            Base.Write("Attempting Surrender", ConsoleColor.White);
+            new InputSimulator().Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.RETURN);
+            new InputSimulator().Keyboard.TextEntry("/surrender");
+            Thread.Sleep(1000);
+            new InputSimulator().Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.RETURN);
+        }
 
         public static bool GetStatus( bool print = false )
         {
@@ -207,7 +218,7 @@ namespace LeagueMaster
 
         static public Point RelativePoint(RECT dimensions, double xPct, double yPct)
         {
-            Base.Write("Width:" + dimensions.Width + "*" + xPct);
+            //Base.Write("Width:" + dimensions.Width + "*" + xPct);
             int x = (int)((double)dimensions.Width * xPct);
             int y = (int)((double)dimensions.Height * yPct);
 
