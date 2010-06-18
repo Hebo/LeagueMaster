@@ -26,33 +26,38 @@ namespace LeagueMaster
             {
                 WriteTimeStamp();
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Fatal Error: League of Legends is not open");
+                Console.WriteLine("Fatal Error: League of Lols is not open");
                 ResetConsoleColor();
                 return;
             }
             
-
-            Bot.GetStatus();
             Bot.PrintStatus();
 
-            //do next move (begin launch)
-
             //start bot interraction process
+            var myBot = new Bot();
+            Thread oThread = new Thread(new ThreadStart(myBot.BotManager));
+            oThread.Start();
+            Thread.Sleep(1000);
 
-            //wait  on close key
 
 
+            //close on keypress
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("Press any key to quit.");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            ConsoleKeyInfo cki;
+            cki = Console.ReadKey(true);
+            oThread.Abort();
         }
 
-        public static void Write(ConsoleColor c, string msg, params object[] args)
+        public static void Write(object msg, ConsoleColor c = ConsoleColor.Gray)
         {
             WriteTimeStamp();
             Console.ForegroundColor = c;
-            Console.WriteLine(msg, args);
+            dynamic dynMsg = msg;
+            Console.WriteLine(dynMsg);
             ResetConsoleColor();
         }
-
-        
         
         public static void WriteTimeStamp()
         {

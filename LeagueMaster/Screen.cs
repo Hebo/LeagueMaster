@@ -18,7 +18,7 @@ namespace LeagueMaster
                 //add offset in window to window's location on screen
                 Color sample = Win32.GetPixelColor(dimensions.Left + pix.relativeX, dimensions.Top + pix.relativeY);
 
-                Console.WriteLine(sample.ToString() + "@" + dimensions.Left + pix.relativeX + "x" + dimensions.Top + pix.relativeY + " v " + pix.pixelColor.ToString());
+                //Console.WriteLine(sample.ToString() + "@" + dimensions.Left + pix.relativeX + "x" + dimensions.Top + pix.relativeY + " v " + pix.pixelColor.ToString());
                 if (sample != pix.pixelColor)
                 {
                     return false;

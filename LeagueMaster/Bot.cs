@@ -2,58 +2,119 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace LeagueMaster
 {
-    class Bot
+    public class Bot
     {
         #region Member Definitions
         static IntPtr clientWindowHandle;
         static RECT clientWindowDimensions;
         static IntPtr gameWindowHandle;
         static RECT gameWindowDimensions;
+        
+        public enum WindowStatusType { Client, Game };
+        public enum GameStatusType { InProgress, Ended };
+        public enum ClientStatusType { Unqueued, Queue, ScoreScreen };
 
-        enum WindowStatusType { Client, Game };
-        static WindowStatusType WindowStatus;
+        public struct statusType
+        {
+           public WindowStatusType WindowStatus;
+           public GameStatusType GameStatus;
+           public ClientStatusType ClientStatus;
+        }
+        public static statusType status;
 
-        enum GameStatusType { InProgress, Ended };
-        static GameStatusType GameStatus;
-
-        enum ClientStatusType { Queue, ScoreScreen };
-        static ClientStatusType ClientStatus;
         #endregion
+
+        public void BotManager()
+        {
+            Base.Write("Bot Initialized");
+            GetStatus();
+
+            while (true)
+            { 
+                Thread.Sleep(1000);
+                statusType oldStatus = status;
+                GetStatus();
+
+                if (!status.Equals(oldStatus))
+                {
+                    PrintStatus();
+                    //dispose of timers
+
+
+
+                    if (status.WindowStatus == WindowStatusType.Game)
+                    {
+                        if (status.GameStatus == GameStatusType.InProgress)
+                        {
+                            //start timers
+                            //do mouse stuff
+                            //wait
+                        }
+                        else
+                        {
+                            //click end game
+                        }
+                    }
+                    else
+                    {
+                        //client stuff
+                    }
+                }
+
+            }
+            
+
+            
+        }
 
         public static bool GetStatus()
         {
-            Console.Write("Retrieving status...   ");
 
             if (Base.IsProcessOpen(Base.gameName))
             {
                 gameWindowHandle = GetWindowHandle(Base.gameName);
                 Win32.GetWindowRect(gameWindowHandle, out gameWindowDimensions);
-                Console.Write("Game: Handle " + gameWindowHandle + " @ " + gameWindowDimensions.Left + "*" + gameWindowDimensions.Top + "\n");
-                WindowStatus = WindowStatusType.Game;
+                //Console.Write("Game: Handle " + gameWindowHandle + " @ " + gameWindowDimensions.Left + "*" + gameWindowDimensions.Top + "\n");
+                status.WindowStatus = WindowStatusType.Game;
             }
             else
             {
                 clientWindowHandle = GetWindowHandle(Base.clientName);
                 Win32.GetWindowRect(gameWindowHandle, out clientWindowDimensions);
-                Console.Write("Client: Handle " + clientWindowHandle + " @ " + clientWindowDimensions.Left + "*" + clientWindowDimensions.Top + "\n");
-                WindowStatus = WindowStatusType.Client;
+                //Console.Write("Client: Handle " + clientWindowHandle + " @ " + clientWindowDimensions.Left + "*" + clientWindowDimensions.Top + "\n");
+                status.WindowStatus = WindowStatusType.Client;
             }
 
-            if (WindowStatus == WindowStatusType.Game)
+            if (status.WindowStatus == WindowStatusType.Game)
             {
                 //start ocring to figure out wtf
                 if (Screen.testScreen("defeat", gameWindowDimensions))
                 {
-                    Console.WriteLine("defeet!!!!");
-                    GameStatus = GameStatusType.Ended;
+                    status.GameStatus = GameStatusType.Ended;
                 }
                 else
                 {
-                    Console.WriteLine("asdfasdf!!!!");
-                    GameStatus = GameStatusType.InProgress;
+                    status.GameStatus = GameStatusType.InProgress;
+                }
+
+            }
+            else
+            {
+                if (true)
+                {
+                    status.ClientStatus = ClientStatusType.Queue;
+                }
+                else if (false)
+	            {
+                    status.ClientStatus = ClientStatusType.ScoreScreen;
+            	}
+                else
+                {
+                    status.ClientStatus = ClientStatusType.ScoreScreen;
                 }
 
             }
@@ -67,16 +128,13 @@ namespace LeagueMaster
         {
             if (GetStatus())
             {
-                if (WindowStatus == WindowStatusType.Game)
+                if (status.WindowStatus == WindowStatusType.Game)
                 {
-                    if (GameStatus == GameStatusType.Ended)
+                    if (status.GameStatus == GameStatusType.Ended)
                     {
                         if (Screen.testScreen("defeat", gameWindowDimensions))
                         {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Base.WriteTimeStamp();
-                            Console.WriteLine("Game Over: Defeat!");
-                            Base.ResetConsoleColor();
+                            Base.Write("Game Over: Defeat!", ConsoleColor.White);
                         }
                         else
                         {
@@ -96,13 +154,17 @@ namespace LeagueMaster
                 }
                 else
                 {
-                    if (ClientStatus == ClientStatusType.Queue)
+                    if (status.ClientStatus == ClientStatusType.Queue)
                     {
-                        Base.Write(ConsoleColor.Yellow, "Client: In match queue");
+                        Base.Write("Client: In match queue");
+                    }
+                    else if (status.ClientStatus == ClientStatusType.Unqueued)
+                    {
+                        Base.Write("Client: Not In match queue");
                     }
                     else
                     {
-                        Base.Write(ConsoleColor.Yellow, "Client: Not In match queue");
+                        Base.Write("Client: Score Screen");
                     }
                 }
             }
