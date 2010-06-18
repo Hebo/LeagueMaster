@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
@@ -53,7 +52,6 @@ namespace LeagueMaster
         }
 
         #endregion
-
     }
 
         #region Win32 Functions

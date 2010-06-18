@@ -32,6 +32,7 @@ namespace LeagueMaster
         {
             Base.Write("Bot Initialized");
             GetStatus();
+            PrintStatus();
 
             while (true)
             { 
@@ -138,18 +139,12 @@ namespace LeagueMaster
                         }
                         else
                         {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Base.WriteTimeStamp();
-                            Console.WriteLine("Game Over: Victory!");
-                            Base.ResetConsoleColor();
+                            Base.Write("Game Over: Victory!", ConsoleColor.White);
                         }
                     }
                     else
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Base.WriteTimeStamp();
-                        Console.WriteLine("Game in Progress");
-                        Base.ResetConsoleColor();
+                        Base.Write("Game in Progress");
                     }
                 }
                 else
