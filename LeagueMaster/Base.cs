@@ -70,9 +70,8 @@ namespace LeagueMaster
             }
 
             // Write to the file:
-            log.WriteLine(DateTime.Now);
+            log.Write("[" + DateTime.Now + "] ");
             log.WriteLine(msg);
-            log.WriteLine();
             
             log.Close(); // Close the stream:
 

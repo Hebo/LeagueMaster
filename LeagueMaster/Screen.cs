@@ -33,6 +33,9 @@ namespace LeagueMaster
                     return false;
                 }
             }
+#if DEBUG
+            Base.Write("Success");
+#endif
             return true;
         }
 
@@ -42,11 +45,14 @@ namespace LeagueMaster
         {
             //middle of E on defeat screen
             {"defeat", new PatternType[] { new PatternType(0.438194444, 0.278888889, Color.FromArgb(170, 3, 3)) }},
-            {"victory", new PatternType[] { new PatternType(0.540625, 0.3875, Color.FromArgb(255, 244, 106)) }}, //T in victory
+            {"victory", new PatternType[] { new PatternType(0.478561549, 0.32, Color.FromArgb(255, 244, 106)) }}, //T in victory
             
             {"score", new PatternType[] {   new PatternType(0.56640625, 0.875, Color.FromArgb(255, 255, 255)),
                                             new PatternType(0.57421875, 0.875, Color.FromArgb(255, 255, 255))
                                       }}, //chat input box
+            {"levelup", new PatternType[] {   new PatternType(0.56640625, 0.875, Color.FromArgb(128, 128, 128)),
+                                new PatternType(0.57421875, 0.875, Color.FromArgb(128, 128, 128))
+                            }}, //chat input box
         };
 
 

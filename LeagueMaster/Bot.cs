@@ -27,14 +27,13 @@ namespace LeagueMaster
            public GameStatusType GameStatus;
            public ClientStatusType ClientStatus;
         }
-        public static statusType status;
+        public static statusType status = new statusType();
 
         #endregion
 
         public void BotManager()
         {
-            Base.Write("Bot Initialized");
-            GetStatus();
+            Base.Write("Bot Initialized", ConsoleColor.White);
 
             System.Threading.Timer afkTimer = null;
             System.Threading.Timer surrenderTimer = null;
@@ -78,14 +77,10 @@ namespace LeagueMaster
                     {
                         if (status.ClientStatus == ClientStatusType.ScoreScreen)
                         {
-                            Base.Write("Dismissing Dialogs");
-                            Cursor.Position = RelativePoint(clientWindowDimensions, 0.40234375, 0.54375);
-                            new InputSimulator().Mouse.LeftButtonClick();
-
-                            Base.Write("Clicking \"Play Again\" in five seconds");
+                            Base.Write("Clicking \"Play Again\" in a moment");
                             Cursor.Position = RelativePoint(clientWindowDimensions, 0.90625, 0.93125);
                             ActivateApplication(Base.clientName);
-                            Thread.Sleep(5000);
+                            Thread.Sleep(3000);
                             new InputSimulator().Mouse.LeftButtonClick(); 
                         }
                         else
@@ -134,6 +129,17 @@ namespace LeagueMaster
             new InputSimulator().Keyboard.TextEntry("/surrender");
             Thread.Sleep(500);
             new InputSimulator().Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.RETURN);
+        }
+
+        // if we enter a fail state, detect it so we can recover 
+        static void DetectFailState(object state)
+        {
+            if (Screen.testScreen("itemshop", gameWindowDimensions))
+            {
+                Base.Write("Fail State: Item Shop", ConsoleColor.Yellow);
+                //recover
+                new InputSimulator().Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.ESCAPE);
+            }
         }
 
         public static bool GetStatus( bool print = false )
@@ -195,6 +201,22 @@ namespace LeagueMaster
                         Base.Write("In game client: Score Screen", ConsoleColor.White);
                     }
                 }
+                else if (Screen.testScreen("levelup", clientWindowDimensions)) //todo
+	            {
+                    if (print)
+                    {
+                        Base.Write("Level up!", ConsoleColor.Yellow);
+                        Base.Write("Clearing popup", ConsoleColor.White);
+                    }
+
+                    Cursor.Position = RelativePoint(clientWindowDimensions, 0.5, 0.6475);
+                    Thread.Sleep(1000);
+                    new InputSimulator().Mouse.LeftButtonClick();
+
+                    status.ClientStatus = ClientStatusType.Unqueued;
+            	}
+
+
                 else if (false) //todo
 	            {
                     status.ClientStatus = ClientStatusType.Unqueued;
