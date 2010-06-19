@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
-using MovablePython; //Global hotkeys
 
 namespace LeagueMaster
 {
@@ -26,10 +25,10 @@ namespace LeagueMaster
             //confirm lol is running
             if ( !IsProcessOpen( clientName ) )
             {
-                WriteTimeStamp();
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Fatal Error: League of Lols is not open");
-                ResetConsoleColor();
+                Write("Fatal Error: League of Lols is not open", ConsoleColor.Red);
+                
+                ConsoleKeyInfo ck;
+                ck = Console.ReadKey(true);
                 return;
             }
             
@@ -39,22 +38,16 @@ namespace LeagueMaster
             oThread.Start();
             Thread.Sleep(1000);
 
-
-
-            //close on keypress or hotkey
-            Hotkey hk = new Hotkey();
-            hk.KeyCode = Keys.Home;
-            hk.Windows = true;
-            hk.Pressed += delegate { Console.WriteLine("Windows+1 pressed!"); };
-
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("Press any key to quit.");
+            Console.WriteLine("Press Q to quit.");
             Console.ForegroundColor = ConsoleColor.Gray;
-            ConsoleKeyInfo cki;
-            cki = Console.ReadKey(true);
+
+
+            while (Console.ReadKey(true).Key != ConsoleKey.Q );
 
             Close();
         }
+      
         static void Close()
         {
             oThread.Abort();

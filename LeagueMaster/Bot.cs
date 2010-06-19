@@ -67,6 +67,7 @@ namespace LeagueMaster
                             Base.Write("Leaving game screen...");
 
                             Cursor.Position = RelativePoint(gameWindowDimensions, 0.504285714, 0.631111111);
+                            new InputSimulator().Mouse.LeftButtonClick();
                             //ActivateApplication(Base.gameName);
                             Thread.Sleep(1000);
                             new InputSimulator().Mouse.LeftButtonClick();
@@ -74,11 +75,10 @@ namespace LeagueMaster
                     }
                     else
                     {
-
                         if (status.ClientStatus == ClientStatusType.ScoreScreen)
                         {
-                            Base.Write("Clearing Dialogs");
-
+                            Base.Write("Clearing any dialogs");
+                            Cursor.Position = RelativePoint(clientWindowDimensions, 0.40234375, 0.54375);
                             new InputSimulator().Mouse.LeftButtonClick();
 
                             Base.Write("Clicking \"Play Again\" in five seconds");
@@ -224,7 +224,7 @@ namespace LeagueMaster
 
             var abolutePoint = new Point(dimensions.Left + x, dimensions.Top + y);
 
-            Base.Write("Calculated:" + abolutePoint.ToString());
+            //Base.Write("Calculated:" + abolutePoint.ToString());
             return abolutePoint;
         }
 

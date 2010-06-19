@@ -47,7 +47,6 @@
   <ItemGroup>
     <Compile Include="Bot.cs" />
     <Compile Include="Base.cs" />
-    <Compile Include="Hotkey.cs" />
     <Compile Include="Screen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
