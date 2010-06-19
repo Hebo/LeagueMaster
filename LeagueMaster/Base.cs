@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
+using System.IO;
 
 namespace LeagueMaster
 {
@@ -42,7 +43,6 @@ namespace LeagueMaster
             Console.WriteLine("Press Q to quit.");
             Console.ForegroundColor = ConsoleColor.Gray;
 
-
             while (Console.ReadKey(true).Key != ConsoleKey.Q );
 
             Close();
@@ -57,6 +57,25 @@ namespace LeagueMaster
 
         public static void Write(object msg, ConsoleColor c = ConsoleColor.Gray)
         {
+            // Create a writer and open the file:
+            StreamWriter log;
+
+            if (!File.Exists("LeagueMaster.log"))
+            {
+                log = new StreamWriter("LeagueMaster.log");
+            }
+            else
+            {
+                log = File.AppendText("LeagueMaster.log");
+            }
+
+            // Write to the file:
+            log.WriteLine(DateTime.Now);
+            log.WriteLine(msg);
+            log.WriteLine();
+            
+            log.Close(); // Close the stream:
+
             WriteTimeStamp();
             Console.ForegroundColor = c;
             dynamic dynMsg = msg;

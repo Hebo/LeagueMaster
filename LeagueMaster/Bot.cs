@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows.Forms;
 using WindowsInput;
 
+
 namespace LeagueMaster
 {
     public class Bot
@@ -77,7 +78,7 @@ namespace LeagueMaster
                     {
                         if (status.ClientStatus == ClientStatusType.ScoreScreen)
                         {
-                            Base.Write("Clearing any dialogs");
+                            Base.Write("Dismissing Dialogs");
                             Cursor.Position = RelativePoint(clientWindowDimensions, 0.40234375, 0.54375);
                             new InputSimulator().Mouse.LeftButtonClick();
 
@@ -90,6 +91,9 @@ namespace LeagueMaster
                         else
                         {
                             //queued, do nothing but wait
+                            Base.Write("Dismissing Dialogs");
+                            Cursor.Position = RelativePoint(clientWindowDimensions, 0.40234375, 0.54375);
+                            new InputSimulator().Mouse.LeftButtonClick();
                         }
                     }
                    ticks = 1;
@@ -121,12 +125,14 @@ namespace LeagueMaster
                     break;
             }
         }
+
         static void AttemptSurrender(object state)
         {
             Base.Write("Attempting Surrender", ConsoleColor.White);
             new InputSimulator().Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.RETURN);
+            Thread.Sleep(500);
             new InputSimulator().Keyboard.TextEntry("/surrender");
-            Thread.Sleep(1000);
+            Thread.Sleep(500);
             new InputSimulator().Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.RETURN);
         }
 

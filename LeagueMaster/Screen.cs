@@ -1,8 +1,9 @@
-﻿using System;
+﻿#define DEBUG
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
-
 
 namespace LeagueMaster
 {
@@ -20,9 +21,15 @@ namespace LeagueMaster
                 //add offset in window to window's location on screen
                 Color sample = Win32.GetPixelColor(dimensions.Left + x, dimensions.Top + y);
 
-               //Console.WriteLine(sample.ToString() + "@" + (dimensions.Left + pix.relativeX) + "x" + (dimensions.Top + pix.relativeY) + " v " + pix.pixelColor.ToString());
+#if DEBUG
+                Base.Write("Test: " + screenName + "@" + x + "x" + y + " : " + pix.pixelColor.ToString() + " v " + sample.ToString());
+#endif
+
                 if (sample != pix.pixelColor)
                 {
+#if DEBUG
+                    Base.Write("Fail");
+#endif
                     return false;
                 }
             }
