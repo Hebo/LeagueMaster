@@ -25,18 +25,18 @@ namespace LeagueMaster
                 Base.Write("Test: " + screenName + "@" + x + "x" + y + " : " + pix.pixelColor.ToString() + " v " + sample.ToString());
 #endif
 
-                if (sample != pix.pixelColor)
+                if (sample == pix.pixelColor)
                 {
 #if DEBUG
-                    Base.Write("Fail");
+                    Base.Write("Match");
 #endif
-                    return false;
+                    return true;
                 }
             }
 #if DEBUG
-            Base.Write("Success");
+            Base.Write("No Match");
 #endif
-            return true;
+            return false;
         }
 
         #region screens
@@ -45,7 +45,9 @@ namespace LeagueMaster
         {
             //middle of E on defeat screen
             {"defeat", new PatternType[] { new PatternType(0.438194444, 0.278888889, Color.FromArgb(170, 3, 3)) }},
-            {"victory", new PatternType[] { new PatternType(0.478561549, 0.32, Color.FromArgb(255, 244, 106)) }}, //T in victory
+            {"victory", new PatternType[] { new PatternType(0.478561549, 0.32, Color.FromArgb(255, 244, 106)), //T in victory
+                                            new PatternType(0.475728155, 0.326433121, Color.FromArgb(255, 244, 106)), //small screen alternative
+            }}, 
             
             {"score", new PatternType[] {   new PatternType(0.56640625, 0.875, Color.FromArgb(255, 255, 255)),
                                             new PatternType(0.57421875, 0.875, Color.FromArgb(255, 255, 255))

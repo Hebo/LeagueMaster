@@ -57,10 +57,10 @@ namespace LeagueMaster
                     {
                         if (status.GameStatus == GameStatusType.InProgress)
                         {
-                            Base.Write("Re-Starting Anti-AFK & Auto-Surrender in five seconds");
+                            Base.Write("(Re)Starting Anti-AFK & Auto-Surrender in 30 seconds");
                             //ActivateApplication(Base.gameName);
-                            afkTimer = new System.Threading.Timer(AntiAfk, null, 5000, 10000);
-                            surrenderTimer = new System.Threading.Timer(AttemptSurrender, null, 10000, 35000);
+                            afkTimer = new System.Threading.Timer(AntiAfk, null, 30000, 10000);
+                            surrenderTimer = new System.Threading.Timer(AttemptSurrender, null, 100000, 35000);
                         }
                         else
                         { //in victory or defeat game screens
@@ -70,7 +70,7 @@ namespace LeagueMaster
                             new InputSimulator().Mouse.LeftButtonClick();
                             //ActivateApplication(Base.gameName);
                             Thread.Sleep(1000);
-                            new InputSimulator().Mouse.LeftButtonClick();
+                            FuzzyClick();
                         }
                     }
                     else
@@ -81,14 +81,12 @@ namespace LeagueMaster
                             Cursor.Position = RelativePoint(clientWindowDimensions, 0.90625, 0.93125);
                             ActivateApplication(Base.clientName);
                             Thread.Sleep(3000);
-                            new InputSimulator().Mouse.LeftButtonClick(); 
+                            FuzzyClick(); 
                         }
                         else
                         {
                             //queued, do nothing but wait
-                            Base.Write("Dismissing Dialogs");
-                            Cursor.Position = RelativePoint(clientWindowDimensions, 0.40234375, 0.54375);
-                            new InputSimulator().Mouse.LeftButtonClick();
+                            Base.Write("Waiting on queue...");
                         }
                     }
                    ticks = 1;
@@ -255,6 +253,39 @@ namespace LeagueMaster
             //Base.Write("Calculated:" + abolutePoint.ToString());
             return abolutePoint;
         }
+
+        //click multiple times in an area incase we miss
+        static public void FuzzyClick( bool rightClick = false )
+        {
+            
+
+                Point[] Coords = {
+                                     new Point(0, 0),
+                                     new Point(12, 0),
+                                     new Point(0, 12),
+                                     new Point(0, -12),
+                                     new Point(-12, 0),
+                                 };
+
+                foreach (var pos in Coords)
+                {
+                    Cursor.Position = new Point(Cursor.Position.X + pos.X, Cursor.Position.Y + pos.Y);
+                    Thread.Sleep(100);
+                    if (rightClick == false)
+                    {
+                    new InputSimulator().Mouse.LeftButtonClick();
+                    }
+                    else
+	{
+                new InputSimulator().Mouse.RightButtonClick();
+	}
+                    Cursor.Position = new Point(Cursor.Position.X - pos.X, Cursor.Position.Y - pos.Y);
+                }
+            
+
+            
+        }
+
 
         #region P/Invoke
         // Sets the window to be foreground
