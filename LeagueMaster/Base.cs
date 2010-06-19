@@ -26,7 +26,7 @@ namespace LeagueMaster
             ResetConsoleColor();
 
             //confirm lol is running
-            if ( !IsProcessOpen( clientName ) )
+            if (!IsProcessOpen(clientName) && !IsProcessOpen(gameName))
             {
                 Write("Fatal Error: League of Lols is not open", ConsoleColor.Red);
                 

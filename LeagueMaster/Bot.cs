@@ -19,7 +19,7 @@ namespace LeagueMaster
         
         public enum WindowStatusType { Client, Game };
         public enum GameStatusType { InProgress, Ended };
-        public enum ClientStatusType { Unqueued, Queue, ScoreScreen };
+        public enum ClientStatusType { Unqueued, Queue, ScoreScreen, LevelUp };
 
         public struct statusType
         {
@@ -38,17 +38,21 @@ namespace LeagueMaster
             System.Threading.Timer afkTimer = null;
             System.Threading.Timer surrenderTimer = null;
 
+            bool actionNeeded = false;
+
             int ticks = 0;
             while (true)
-            { 
+            {
                 Thread.Sleep(5000);
                 statusType oldStatus = status;
-                GetStatus();
-
+                actionNeeded = GetStatus();
+            
                 //Ticks in the event one of our clicks does not register
-                if (ticks == 0 || ticks == 20 || !oldStatus.Equals(status))
+                if ( ticks == 0 || ticks == 30 || !oldStatus.Equals(status) || actionNeeded)
                 {
-                    GetStatus(true);
+                    if (ticks == 30) actionNeeded = GetStatus(false);
+                    else actionNeeded = GetStatus(true);
+      
                     //dispose of timers
                     if (afkTimer != null) afkTimer.Dispose();
                     if (surrenderTimer != null) surrenderTimer.Dispose();
@@ -57,39 +61,69 @@ namespace LeagueMaster
                     {
                         if (status.GameStatus == GameStatusType.InProgress)
                         {
-                            Base.Write("(Re)Starting Anti-AFK & Auto-Surrender in 30 seconds", ConsoleColor.White);
-                            Bot.BringWindowToTop(Base.gameWindowName, false);
-                            afkTimer = new System.Threading.Timer(AntiAfk, null, 30000, 10000);
-                            surrenderTimer = new System.Threading.Timer(AttemptSurrender, null, 100000, 35000);
+                            Base.Write("(Re)Starting Anti-AFK & Auto-Surrender in 10 seconds", ConsoleColor.White);
+
+                            afkTimer = new System.Threading.Timer(AntiAfk, null, 15000, 10000);
+                            surrenderTimer = new System.Threading.Timer(AttemptSurrender, null, 35000, 35000);
                         }
                         else
                         { //in victory or defeat game screens
                             Base.Write("Leaving game screen...");
-
-                            Cursor.Position = RelativePoint(gameWindowDimensions, 0.504285714, 0.631111111);
-                            new InputSimulator().Mouse.LeftButtonClick();
                             Bot.BringWindowToTop(Base.gameWindowName, false);
+#if DEFCON
+                            Cursor.Position = RelativePoint(gameWindowDimensions, 710, 583);
+#endif
+#if MINI
+                            Cursor.Position = RelativePoint(gameWindowDimensions, 502, 416);
+#endif
                             Thread.Sleep(1000);
-                            FuzzyClick();
+                            new InputSimulator().Mouse.LeftButtonClick();
                         }
                     }
                     else
                     {
+                        if (status.ClientStatus == ClientStatusType.LevelUp)
+                        {
+                            Base.Write("Clearing popup", ConsoleColor.White);
+#if DEFCON
+                    Cursor.Position = RelativePoint(clientWindowDimensions, 640, 519);
+#endif
+#if MINI
+                    Cursor.Position = RelativePoint(clientWindowDimensions, 514, 439);
+#endif
+                            Thread.Sleep(1000);
+                            new InputSimulator().Mouse.LeftButtonClick();
+
+                        }
                         if (status.ClientStatus == ClientStatusType.ScoreScreen)
                         {
                             Base.Write("Clicking \"Play Again\" in a moment");
-                            Cursor.Position = RelativePoint(clientWindowDimensions, 0.90625, 0.93125);
-                            BringWindowToTop(Base.clientWindowName, false);
-                            Thread.Sleep(3000);
-                            FuzzyClick(); 
+                            BringWindowToTop(Base.clientWindowName, true);
+
+#if DEFCON
+                            Cursor.Position = RelativePoint(clientWindowDimensions, 1160, 740);
+#endif
+#if MINI
+                            Cursor.Position = RelativePoint(clientWindowDimensions, 925, 595);
+#endif
+
+                            Thread.Sleep(1000);
+                            new InputSimulator().Mouse.LeftButtonClick();
+
                         }
                         else if (status.ClientStatus == ClientStatusType.Unqueued)
                         {
                             Base.Write("Clicking \"Play Again\" in a moment");
-                            Cursor.Position = RelativePoint(clientWindowDimensions, 0.90625, 0.93125);
                             BringWindowToTop(Base.clientWindowName, true);
-                            Thread.Sleep(3000);
-                            FuzzyClick(); 
+
+#if DEFCON
+                            Cursor.Position = RelativePoint(clientWindowDimensions, 1160, 740);
+#endif
+#if MINI
+                            Cursor.Position = RelativePoint(clientWindowDimensions, 1160, 740);
+#endif
+                            Thread.Sleep(1000);
+                            new InputSimulator().Mouse.LeftButtonClick();
                         }
                         else
                         {
@@ -105,26 +139,13 @@ namespace LeagueMaster
 
         static void AntiAfk(object state)
         {
-            Random rand = new Random();
-            switch (rand.Next(1, 4))
-            {
-                case 1:
-                    Cursor.Position = RelativePoint(gameWindowDimensions, 0.368055556, 0.488888889);
-                    new InputSimulator().Mouse.RightButtonClick();
-                    break;
-                case 2:
-                    Cursor.Position = RelativePoint(gameWindowDimensions, 0.569444444, 0.466666667);;
-                    new InputSimulator().Mouse.RightButtonClick();
-                    break;
-                case 3:
-                    Cursor.Position = RelativePoint(gameWindowDimensions, 0.510416667, 0.388888889);
-                    new InputSimulator().Mouse.RightButtonClick();
-                    break;
-                case 4:
-                    Cursor.Position = RelativePoint(gameWindowDimensions, 0.506944444, 0.5);
-                    new InputSimulator().Mouse.RightButtonClick();
-                    break;
-            }
+#if DEFCON
+                            Cursor.Position = RelativePoint(gameWindowDimensions, 575, 483);
+#endif
+#if MINI
+            Cursor.Position = RelativePoint(gameWindowDimensions, 458, 332);
+#endif
+                new InputSimulator().Mouse.RightButtonClick();
         }
 
         static void AttemptSurrender(object state)
@@ -150,7 +171,7 @@ namespace LeagueMaster
 
         public static bool GetStatus( bool print = false )
         {
-
+            bool actionNeeded = false;
             if (Base.IsProcessOpen(Base.gameName))
             {
                 gameWindowHandle = GetWindowHandle(Base.gameName);
@@ -176,6 +197,7 @@ namespace LeagueMaster
                     {
                         Base.Write("Game Over: Defeat!", ConsoleColor.Yellow);
                     }
+                    actionNeeded = true;
 
                 }
                 else if (Screen.testScreen("victory", gameWindowDimensions))
@@ -185,7 +207,7 @@ namespace LeagueMaster
                     {
                        Base.Write("Game Over: Victory!", ConsoleColor.Yellow);
                     }
-                    
+                    actionNeeded = true;
                 }
                 else
                 {
@@ -206,24 +228,21 @@ namespace LeagueMaster
                     {
                         Base.Write("In game client: Score Screen", ConsoleColor.White);
                     }
+                    actionNeeded = true;
                 }
                 else if (Screen.testScreen("levelup", clientWindowDimensions))
 	            {
+                    status.ClientStatus = ClientStatusType.LevelUp;
                     if (print)
                     {
                         Base.Write("Level up!", ConsoleColor.Yellow);
-                        Base.Write("Clearing popup", ConsoleColor.White);
                     }
-
-                    Cursor.Position = RelativePoint(clientWindowDimensions, 0.5, 0.6475);
-                    Thread.Sleep(1000);
-                    new InputSimulator().Mouse.LeftButtonClick();
-
-                    status.ClientStatus = ClientStatusType.Unqueued;
+                    actionNeeded = true;
             	}
                 else if (false) //todo
 	            {
                     status.ClientStatus = ClientStatusType.Unqueued;
+                    actionNeeded = true;
             	}
                 else
                 {
@@ -235,10 +254,7 @@ namespace LeagueMaster
                 }
 
             }
-
-            //save status
-
-            return true;
+            return actionNeeded;
         }
 
         static IntPtr GetWindowHandle( string name )
@@ -248,15 +264,9 @@ namespace LeagueMaster
             return pFoundWindow;
         }
 
-        static public Point RelativePoint(RECT dimensions, double xPct, double yPct)
+        static public Point RelativePoint(RECT dimensions, int x, int y)
         {
-            //Base.Write("Width:" + dimensions.Width + "*" + xPct);
-            int x = (int)((double)dimensions.Width * xPct);
-            int y = (int)((double)dimensions.Height * yPct);
-
             var abolutePoint = new Point(dimensions.Left + x, dimensions.Top + y);
-
-            //Base.Write("Calculated:" + abolutePoint.ToString());
             return abolutePoint;
         }
 

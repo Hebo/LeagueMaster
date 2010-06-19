@@ -1,6 +1,4 @@
-﻿#define DEBUG
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -15,8 +13,8 @@ namespace LeagueMaster
 
             foreach (PatternType pix in scr)
             {
-                int x = (int)((double)dimensions.Width * pix.xPct);
-                int y = (int)((double)dimensions.Height * pix.yPct);
+                int x = pix.x;
+                int y = pix.y;
 
                 //add offset in window to window's location on screen
                 Color sample = Win32.GetPixelColor(dimensions.Left + x, dimensions.Top + y);
@@ -25,50 +23,76 @@ namespace LeagueMaster
                 Base.Write("Test: " + screenName + "@" + x + "x" + y + " : " + pix.pixelColor.ToString() + " v " + sample.ToString());
 #endif
 
-                if (sample == pix.pixelColor)
+                if (sample != pix.pixelColor)
                 {
 #if DEBUG
-                    Base.Write("Match");
+                    Base.Write("No Match");
 #endif
-                    return true;
+                    return false;
                 }
             }
 #if DEBUG
-            Base.Write("No Match");
+            Base.Write("Match");
 #endif
-            return false;
+            return true;
         }
 
         #region screens
+        
+#if DEFCON
         private static readonly Dictionary<string, PatternType[]> Screens
             = new Dictionary<string, PatternType[]> 
         {
-            //middle of E on defeat screen
-            {"defeat", new PatternType[] { new PatternType(0.438194444, 0.278888889, Color.FromArgb(170, 3, 3)) }},
-            {"victory", new PatternType[] { new PatternType(0.478561549, 0.32, Color.FromArgb(255, 244, 106)), //T in victory
-                                            new PatternType(0.475728155, 0.326433121, Color.FromArgb(255, 244, 106)), //small screen alternative
-            }}, 
             
-            {"score", new PatternType[] {   new PatternType(0.56640625, 0.875, Color.FromArgb(255, 255, 255)),
-                                            new PatternType(0.57421875, 0.875, Color.FromArgb(255, 255, 255))
+            {"defeat", new PatternType[] { new PatternType(630, 254, Color.FromArgb(170, 3, 3)), //middle of E on defeat screen
+                                           
+                                        }},
+            {"victory", new PatternType[] { new PatternType(692, 287, Color.FromArgb(255, 244, 106)), //T in victory
+    
+                                            }}, 
+            
+            {"score", new PatternType[] {   new PatternType(707, 700, Color.FromArgb(255, 255, 255)),
+                                            
                                       }}, //chat input box
-            {"levelup", new PatternType[] {   new PatternType(0.56640625, 0.875, Color.FromArgb(128, 128, 128)),
-                                new PatternType(0.57421875, 0.875, Color.FromArgb(128, 128, 128))
-                            }}, //chat input box
-        };
+            {"levelup", new PatternType[] { new PatternType(737, 700, Color.FromArgb(128, 128, 128)),
+                                            
+                                         }}, //chat input box
 
+        };
+#endif
+#if MINI
+        private static readonly Dictionary<string, PatternType[]> Screens
+    = new Dictionary<string, PatternType[]> 
+        {
+            
+            {"defeat", new PatternType[] {  //middle of E on defeat screen
+                                           new PatternType(447, 169, Color.FromArgb(170, 3, 3)),
+                                        }},
+            {"victory", new PatternType[] { 
+                                            new PatternType(492, 205, Color.FromArgb(255, 244, 106)), //T in victory
+                                            }}, 
+            
+            {"score", new PatternType[] {   
+                                            new PatternType(555, 555, Color.FromArgb(255, 255, 255))
+                                      }}, //chat input box
+            {"levelup", new PatternType[] { 
+                                            new PatternType(555, 555, Color.FromArgb(128, 128, 128))
+                                         }}, //chat input box
+
+        };
+#endif
 
 
         class PatternType
         {
-            public double xPct;
-            public double yPct;
+            public int x;
+            public int y;
             public Color pixelColor;
 
-            public PatternType(double x, double y, Color col)
+            public PatternType(int X, int Y, Color col)
             {
-                xPct = x;
-                yPct = y;
+                x = X;
+                y = Y;
                 pixelColor = col;
             }
         }
