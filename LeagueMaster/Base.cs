@@ -10,6 +10,8 @@ namespace LeagueMaster
     {
         public const string clientName = "LolClient";
         public const string gameName = "League of Legends";
+        public const string clientWindowName = "PVP.net Client";
+        public const string gameWindowName = "League of Legends (TM) Client";
         
         static Thread oThread;
 
@@ -32,7 +34,13 @@ namespace LeagueMaster
                 ck = Console.ReadKey(true);
                 return;
             }
+
+            if (!IsProcessOpen(gameName))
+            {
+                Bot.BringWindowToTop(Base.clientWindowName, true);
+            }
             
+
             //start bot interraction process
             var myBot = new Bot();
             oThread = new Thread(new ThreadStart(myBot.BotManager));

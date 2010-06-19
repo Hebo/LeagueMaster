@@ -57,8 +57,8 @@ namespace LeagueMaster
                     {
                         if (status.GameStatus == GameStatusType.InProgress)
                         {
-                            Base.Write("(Re)Starting Anti-AFK & Auto-Surrender in 30 seconds");
-                            //ActivateApplication(Base.gameName);
+                            Base.Write("(Re)Starting Anti-AFK & Auto-Surrender in 30 seconds", ConsoleColor.White);
+                            Bot.BringWindowToTop(Base.gameWindowName, false);
                             afkTimer = new System.Threading.Timer(AntiAfk, null, 30000, 10000);
                             surrenderTimer = new System.Threading.Timer(AttemptSurrender, null, 100000, 35000);
                         }
@@ -68,7 +68,7 @@ namespace LeagueMaster
 
                             Cursor.Position = RelativePoint(gameWindowDimensions, 0.504285714, 0.631111111);
                             new InputSimulator().Mouse.LeftButtonClick();
-                            //ActivateApplication(Base.gameName);
+                            Bot.BringWindowToTop(Base.gameWindowName, false);
                             Thread.Sleep(1000);
                             FuzzyClick();
                         }
@@ -79,7 +79,15 @@ namespace LeagueMaster
                         {
                             Base.Write("Clicking \"Play Again\" in a moment");
                             Cursor.Position = RelativePoint(clientWindowDimensions, 0.90625, 0.93125);
-                            ActivateApplication(Base.clientName);
+                            BringWindowToTop(Base.clientWindowName, false);
+                            Thread.Sleep(3000);
+                            FuzzyClick(); 
+                        }
+                        else if (status.ClientStatus == ClientStatusType.Unqueued)
+                        {
+                            Base.Write("Clicking \"Play Again\" in a moment");
+                            Cursor.Position = RelativePoint(clientWindowDimensions, 0.90625, 0.93125);
+                            BringWindowToTop(Base.clientWindowName, true);
                             Thread.Sleep(3000);
                             FuzzyClick(); 
                         }
@@ -199,7 +207,7 @@ namespace LeagueMaster
                         Base.Write("In game client: Score Screen", ConsoleColor.White);
                     }
                 }
-                else if (Screen.testScreen("levelup", clientWindowDimensions)) //todo
+                else if (Screen.testScreen("levelup", clientWindowDimensions))
 	            {
                     if (print)
                     {
@@ -213,8 +221,6 @@ namespace LeagueMaster
 
                     status.ClientStatus = ClientStatusType.Unqueued;
             	}
-
-
                 else if (false) //todo
 	            {
                     status.ClientStatus = ClientStatusType.Unqueued;
@@ -288,27 +294,47 @@ namespace LeagueMaster
 
 
         #region P/Invoke
-        // Sets the window to be foreground
-        [DllImport("User32")]
-        private static extern int SetForegroundWindow(IntPtr hwnd);
 
-        // Activate or minimize a window
-        [DllImportAttribute("User32.DLL")]
-        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-        private const int SW_SHOW = 5;
-        private const int SW_MINIMIZE = 6;
-        private const int SW_RESTORE = 9;
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool SetForegroundWindow(IntPtr hWnd);
+        
+        // For Windows Mobile, replace user32.dll with coredll.dll
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
-        private void ActivateApplication(string briefAppName)
+        // Find window by Caption only. Note you must pass IntPtr.Zero as the first parameter.
+        [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
+        static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
+        // You can also call FindWindow(default(string), lpWindowName) or FindWindow((string)null, lpWindowName)
+
+
+        public static bool BringWindowToTop(string windowName, bool wait)
         {
-            Process[] procList = Process.GetProcessesByName(briefAppName);
-
-            if (procList.Length > 0)
+            int hWnd = FindWindow(windowName, wait);
+            if (hWnd != 0)
             {
-                ShowWindow(procList[0].MainWindowHandle, SW_RESTORE);
-                SetForegroundWindow(procList[0].MainWindowHandle);
+                return SetForegroundWindow((IntPtr)hWnd);
             }
+            return false;
         }
+
+        // THE FOLLOWING METHOD REFERENCES THE FindWindowAPI
+        public static int FindWindow(string windowName, bool wait)
+        {
+            int hWnd = (int) FindWindow(null, windowName);
+            while (wait && hWnd == 0)
+            {
+                System.Threading.Thread.Sleep(500);
+                hWnd = (int) FindWindow(null, windowName);
+            }
+
+            return hWnd;
+        }
+
+
+
+
         #endregion
     }
 }
