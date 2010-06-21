@@ -28,7 +28,7 @@ namespace LeagueMaster
             //confirm lol is running
             if (!IsProcessOpen(clientName) && !IsProcessOpen(gameName))
             {
-                Write("Fatal Error: League of Legends is not open", ConsoleColor.Red);
+                Write("Error: League of Legends is not open", ConsoleColor.Red);
                 
                 ConsoleKeyInfo ck;
                 ck = Console.ReadKey(true);

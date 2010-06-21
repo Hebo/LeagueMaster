@@ -29,11 +29,22 @@ namespace LeagueMaster
         }
         public static statusType status = new statusType();
 
+
         #endregion
 
         public void BotManager()
         {
-            Base.Write("Bot Initialized", ConsoleColor.White);
+            Position points;
+            try
+            {
+               points = new Position();
+               Base.Write("Bot initialized with resolution " + points.resolution, ConsoleColor.White);
+            }
+            catch (Exception e)
+            {
+                Base.Write(e);
+                System.Environment.Exit(1);
+            }
 
             System.Threading.Timer afkTimer = null;
             System.Threading.Timer surrenderTimer = null;
@@ -120,7 +131,7 @@ namespace LeagueMaster
                             Cursor.Position = RelativePoint(clientWindowDimensions, 1160, 740);
 #endif
 #if MINI
-                            Cursor.Position = RelativePoint(clientWindowDimensions, 1160, 740);
+                            Cursor.Position = RelativePoint(clientWindowDimensions, 925, 595);
 #endif
                             Thread.Sleep(1000);
                             new InputSimulator().Mouse.LeftButtonClick();
