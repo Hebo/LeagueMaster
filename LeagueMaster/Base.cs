@@ -28,7 +28,7 @@ namespace LeagueMaster
             //confirm lol is running
             if (!IsProcessOpen(clientName) && !IsProcessOpen(gameName))
             {
-                Write("Fatal Error: League of Lols is not open", ConsoleColor.Red);
+                Write("Fatal Error: League of Legends is not open", ConsoleColor.Red);
                 
                 ConsoleKeyInfo ck;
                 ck = Console.ReadKey(true);
@@ -40,6 +40,7 @@ namespace LeagueMaster
                 Bot.BringWindowToTop(Base.clientWindowName, true);
             }
             
+            Write("Make sure League of Legends is in queue or game");
 
             //start bot interraction process
             var myBot = new Bot();
@@ -47,9 +48,7 @@ namespace LeagueMaster
             oThread.Start();
             Thread.Sleep(1000);
 
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("Press Q to quit.");
-            Console.ForegroundColor = ConsoleColor.Gray;
+            Write("Press Q to quit", ConsoleColor.Yellow);
 
             while (Console.ReadKey(true).Key != ConsoleKey.Q );
 

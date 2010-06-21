@@ -150,7 +150,7 @@ namespace LeagueMaster
 
         static void AttemptSurrender(object state)
         {
-            Base.Write("Attempting Surrender", ConsoleColor.White);
+            Base.Write("Attempting Surrender");
             new InputSimulator().Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.RETURN);
             Thread.Sleep(500);
             new InputSimulator().Keyboard.TextEntry("/surrender");
