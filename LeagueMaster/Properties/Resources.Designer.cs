@@ -63,25 +63,56 @@ namespace LeagueMaster.Properties {
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot;?&gt;
         ///&lt;positions&gt;
-        ///&lt;!-- Location to click ingame to avoid AFKing--&gt;  
-        ///    &lt;position ID=&quot;anti_afk&quot;&gt;
-        ///        &lt;x&gt;123&lt;/x&gt;
-        ///        &lt;y&gt;456&lt;/y&gt;
-        ///    &lt;/position&gt;
+        ///  &lt;!-- Location to click ingame to avoid AFKing--&gt;
+        ///  &lt;position id=&quot;anti_afk&quot;&gt;
+        ///    &lt;x&gt;575&lt;/x&gt;
+        ///    &lt;y&gt;483&lt;/y&gt;y
+        ///  &lt;/position&gt;
         ///
-        ///&lt;!-- Middle of the &quot;Play Again&quot; button to requeue--&gt;  
-        ///    &lt;position ID=&quot;play_again_button&quot;&gt;
-        ///        &lt;x&gt;123&lt;/x&gt;
-        ///        &lt;y&gt;456&lt;/y&gt;
-        ///    &lt;/position&gt;
+        ///  &lt;!-- Middle of the &quot;Play Again&quot; button to requeue--&gt;
+        ///  &lt;position id=&quot;play_again_button&quot;&gt;
+        ///    &lt;x&gt;1160&lt;/x&gt;
+        ///    &lt;y&gt;740&lt;/y&gt;
+        ///  &lt;/position&gt;
         ///
-        ///&lt;!-- Middle of the leave game button at endgame screen--&gt;  
-        ///    &lt;position ID=&quot;end_game_button&quot;&gt;
-        ///        &lt;x&gt;123&lt;/x&gt;
-        ///        &lt;y&gt;456&lt;/y&gt;
-        ///    &lt;/position&gt;
-        ///  
-        ///&lt;!-- Gold color in the T of &quot;Victory&quot; at t [rest of string was truncated]&quot;;.
+        ///  &lt;!-- Middle of the leave game button at endgame screen--&gt;
+        ///  &lt;position id=&quot;end_game_button&quot;&gt;
+        ///    &lt;x&gt;710&lt;/x&gt;
+        ///    &lt;y&gt;583&lt;/y&gt;
+        ///  &lt;/position&gt;
+        ///
+        ///  &lt;!-- Middle of the ok button on the level-up notification popup--&gt;
+        ///  &lt;positi [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string _1024x600 {
+            get {
+                return ResourceManager.GetString("_1024x600", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot;?&gt;
+        ///&lt;positions&gt;
+        ///  &lt;!-- Location to click ingame to avoid AFKing--&gt;
+        ///  &lt;position id=&quot;anti_afk&quot;&gt;
+        ///    &lt;x&gt;575&lt;/x&gt;
+        ///    &lt;y&gt;483&lt;/y&gt;y
+        ///  &lt;/position&gt;
+        ///
+        ///  &lt;!-- Middle of the &quot;Play Again&quot; button to requeue--&gt;
+        ///  &lt;position id=&quot;play_again_button&quot;&gt;
+        ///    &lt;x&gt;1160&lt;/x&gt;
+        ///    &lt;y&gt;740&lt;/y&gt;
+        ///  &lt;/position&gt;
+        ///
+        ///  &lt;!-- Middle of the leave game button at endgame screen--&gt;
+        ///  &lt;position id=&quot;end_game_button&quot;&gt;
+        ///    &lt;x&gt;710&lt;/x&gt;
+        ///    &lt;y&gt;583&lt;/y&gt;
+        ///  &lt;/position&gt;
+        ///
+        ///  &lt;!-- Middle of the ok button on the level-up notification popup--&gt;
+        ///  &lt;positi [rest of string was truncated]&quot;;.
         /// </summary>
         public static string _1440x900 {
             get {

@@ -59,29 +59,6 @@ namespace LeagueMaster
 
         };
 
-#if MINI
-        private static readonly Dictionary<string, PatternType[]> Screens
-    = new Dictionary<string, PatternType[]> 
-        {
-            
-            {"defeat", new PatternType[] {  //middle of E on defeat screen
-                                           new PatternType(447, 169, Color.FromArgb(170, 3, 3)),
-                                        }},
-            {"victory", new PatternType[] { 
-                                            new PatternType(492, 205, Color.FromArgb(255, 244, 106)), //T in victory
-                                            }}, 
-            
-            {"score", new PatternType[] {   
-                                            new PatternType(555, 555, Color.FromArgb(255, 255, 255))
-                                      }}, //chat input box
-            {"levelup", new PatternType[] { 
-                                            new PatternType(555, 555, Color.FromArgb(128, 128, 128))
-                                         }}, //chat input box
-
-        };
-#endif
-
-
         class PatternType
         {
             public int x;

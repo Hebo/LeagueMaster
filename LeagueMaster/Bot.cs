@@ -80,11 +80,7 @@ namespace LeagueMaster
                         { //in victory or defeat game screens
                             Base.Write("Leaving game screen...");
                             Bot.BringWindowToTop(Base.gameWindowName, false);
-
                             Cursor.Position = RelativePoint(gameWindowDimensions, positions.Get("end_game_button"));
-#if MINI
-                            Cursor.Position = RelativePoint(gameWindowDimensions, 502, 416);
-#endif
                             Thread.Sleep(1000);
                             new InputSimulator().Mouse.LeftButtonClick();
                         }
@@ -95,9 +91,6 @@ namespace LeagueMaster
                         {
                             Base.Write("Clearing popup", ConsoleColor.White);
                             Cursor.Position = RelativePoint(clientWindowDimensions, positions.Get("level_up_button"));
-#if MINI
-                    Cursor.Position = RelativePoint(clientWindowDimensions, 514, 439);
-#endif
                             Thread.Sleep(1000);
                             new InputSimulator().Mouse.LeftButtonClick();
 
@@ -106,12 +99,7 @@ namespace LeagueMaster
                         {
                             Base.Write("Clicking \"Play Again\" in a moment");
                             BringWindowToTop(Base.clientWindowName, true);
-
                             Cursor.Position = RelativePoint(clientWindowDimensions, positions.Get("play_again_button"));
-#if MINI
-                            Cursor.Position = RelativePoint(clientWindowDimensions, 925, 595);
-#endif
-
                             Thread.Sleep(1000);
                             new InputSimulator().Mouse.LeftButtonClick();
 
@@ -120,11 +108,7 @@ namespace LeagueMaster
                         {
                             Base.Write("Clicking \"Play Again\" in a moment");
                             BringWindowToTop(Base.clientWindowName, true);
-
                             Cursor.Position = RelativePoint(clientWindowDimensions, positions.Get("play_again_button"));
-#if MINI
-                            Cursor.Position = RelativePoint(clientWindowDimensions, 925, 595);
-#endif
                             Thread.Sleep(1000);
                             new InputSimulator().Mouse.LeftButtonClick();
                         }
@@ -142,11 +126,7 @@ namespace LeagueMaster
 
         static void AntiAfk(object state)
         {
-
               Cursor.Position = RelativePoint(gameWindowDimensions, positions.Get("anti_afk"));
-#if MINI
-            Cursor.Position = RelativePoint(gameWindowDimensions, 458, 332);
-#endif
                 new InputSimulator().Mouse.RightButtonClick();
         }
 
@@ -263,12 +243,6 @@ namespace LeagueMaster
             IntPtr pFoundWindow = processes[0].MainWindowHandle;
             return pFoundWindow;
         }
-
-        static public Point RelativePoint(RECT dimensions, int x, int y)
-        {
-            var abolutePoint = new Point(dimensions.Left + x, dimensions.Top + y);
-            return abolutePoint;
-        }
         
         static public Point RelativePoint(RECT dimensions, Position.positionType pos)
         {
@@ -276,7 +250,7 @@ namespace LeagueMaster
             return abolutePoint;
         }
 
-        //click multiple times in an area incase we miss
+        //click multiple times in an area incase we miss (not used)
         static public void FuzzyClick( bool rightClick = false )
         {
             
