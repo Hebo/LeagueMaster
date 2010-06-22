@@ -29,16 +29,15 @@ namespace LeagueMaster
         }
         public static statusType status = new statusType();
 
-
+        static public Position positions;
         #endregion
 
         public void BotManager()
         {
-            Position points;
             try
             {
-               points = new Position();
-               Base.Write("Bot initialized with resolution " + points.resolution, ConsoleColor.White);
+               positions = new Position();
+               Base.Write("Bot initialized with resolution " + positions.resolution, ConsoleColor.White);
             }
             catch (Exception e)
             {
@@ -81,9 +80,8 @@ namespace LeagueMaster
                         { //in victory or defeat game screens
                             Base.Write("Leaving game screen...");
                             Bot.BringWindowToTop(Base.gameWindowName, false);
-#if DEFCON
-                            Cursor.Position = RelativePoint(gameWindowDimensions, 710, 583);
-#endif
+
+                            Cursor.Position = RelativePoint(gameWindowDimensions, positions.Get("end_game_button"));
 #if MINI
                             Cursor.Position = RelativePoint(gameWindowDimensions, 502, 416);
 #endif
@@ -96,9 +94,7 @@ namespace LeagueMaster
                         if (status.ClientStatus == ClientStatusType.LevelUp)
                         {
                             Base.Write("Clearing popup", ConsoleColor.White);
-#if DEFCON
-                    Cursor.Position = RelativePoint(clientWindowDimensions, 640, 519);
-#endif
+                            Cursor.Position = RelativePoint(clientWindowDimensions, positions.Get("level_up_button"));
 #if MINI
                     Cursor.Position = RelativePoint(clientWindowDimensions, 514, 439);
 #endif
@@ -111,9 +107,7 @@ namespace LeagueMaster
                             Base.Write("Clicking \"Play Again\" in a moment");
                             BringWindowToTop(Base.clientWindowName, true);
 
-#if DEFCON
-                            Cursor.Position = RelativePoint(clientWindowDimensions, 1160, 740);
-#endif
+                            Cursor.Position = RelativePoint(clientWindowDimensions, positions.Get("play_again_button"));
 #if MINI
                             Cursor.Position = RelativePoint(clientWindowDimensions, 925, 595);
 #endif
@@ -127,9 +121,7 @@ namespace LeagueMaster
                             Base.Write("Clicking \"Play Again\" in a moment");
                             BringWindowToTop(Base.clientWindowName, true);
 
-#if DEFCON
-                            Cursor.Position = RelativePoint(clientWindowDimensions, 1160, 740);
-#endif
+                            Cursor.Position = RelativePoint(clientWindowDimensions, positions.Get("play_again_button"));
 #if MINI
                             Cursor.Position = RelativePoint(clientWindowDimensions, 925, 595);
 #endif
@@ -150,9 +142,8 @@ namespace LeagueMaster
 
         static void AntiAfk(object state)
         {
-#if DEFCON
-                            Cursor.Position = RelativePoint(gameWindowDimensions, 575, 483);
-#endif
+
+              Cursor.Position = RelativePoint(gameWindowDimensions, positions.Get("anti_afk"));
 #if MINI
             Cursor.Position = RelativePoint(gameWindowDimensions, 458, 332);
 #endif
@@ -169,7 +160,7 @@ namespace LeagueMaster
             new InputSimulator().Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.RETURN);
         }
 
-        // if we enter a fail state, detect it so we can recover 
+        // if we enter a fail state, detect it so we can recover (UNIMPLEMENTED)
         static void DetectFailState(object state)
         {
             if (Screen.testScreen("itemshop", gameWindowDimensions))
@@ -187,20 +178,18 @@ namespace LeagueMaster
             {
                 gameWindowHandle = GetWindowHandle(Base.gameName);
                 Win32.GetWindowRect(gameWindowHandle, out gameWindowDimensions);
-                //Console.Write("Game: Handle " + gameWindowHandle + " @ " + gameWindowDimensions.Left + "*" + gameWindowDimensions.Top + "\n");
                 status.WindowStatus = WindowStatusType.Game;
             }
             else
             {
                 clientWindowHandle = GetWindowHandle(Base.clientName);
                 Win32.GetWindowRect(clientWindowHandle, out clientWindowDimensions);
-                //Console.Write("Client: Handle " + clientWindowHandle + " @ " + clientWindowDimensions.Left + "*" + clientWindowDimensions.Top + "\n");
                 status.WindowStatus = WindowStatusType.Client;
             }
 
             if (status.WindowStatus == WindowStatusType.Game)
             {
-                //start ocring to figure out wtf
+                //start imaging to figure out wtf
                 if (Screen.testScreen("defeat", gameWindowDimensions))
                 {
                     status.GameStatus = GameStatusType.Ended;
@@ -280,6 +269,12 @@ namespace LeagueMaster
             var abolutePoint = new Point(dimensions.Left + x, dimensions.Top + y);
             return abolutePoint;
         }
+        
+        static public Point RelativePoint(RECT dimensions, Position.positionType pos)
+        {
+            var abolutePoint = new Point(dimensions.Left + pos.x, dimensions.Top + pos.y);
+            return abolutePoint;
+        }
 
         //click multiple times in an area incase we miss
         static public void FuzzyClick( bool rightClick = false )
@@ -312,7 +307,6 @@ namespace LeagueMaster
 
             
         }
-
 
         #region P/Invoke
 

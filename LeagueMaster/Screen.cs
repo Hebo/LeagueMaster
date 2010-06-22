@@ -39,27 +39,26 @@ namespace LeagueMaster
 
         #region screens
         
-#if DEFCON
         private static readonly Dictionary<string, PatternType[]> Screens
             = new Dictionary<string, PatternType[]> 
         {
             
-            {"defeat", new PatternType[] { new PatternType(630, 254, Color.FromArgb(170, 3, 3)), //middle of E on defeat screen
+            {"defeat", new PatternType[] { new PatternType(Bot.positions.Get("defeat_sample"), Color.FromArgb(170, 3, 3)), //middle of E on defeat screen
                                            
                                         }},
-            {"victory", new PatternType[] { new PatternType(692, 287, Color.FromArgb(255, 244, 106)), //T in victory
+            {"victory", new PatternType[] { new PatternType(Bot.positions.Get("victory_sample"), Color.FromArgb(255, 244, 106)), //T in victory
     
                                             }}, 
             
-            {"score", new PatternType[] {   new PatternType(707, 700, Color.FromArgb(255, 255, 255)),
+            {"score", new PatternType[] {   new PatternType(Bot.positions.Get("score_sample"), Color.FromArgb(255, 255, 255)),
                                             
                                       }}, //chat input box
-            {"levelup", new PatternType[] { new PatternType(737, 700, Color.FromArgb(128, 128, 128)),
+            {"levelup", new PatternType[] { new PatternType(Bot.positions.Get("levelup_sample"), Color.FromArgb(128, 128, 128)),
                                             
                                          }}, //chat input box
 
         };
-#endif
+
 #if MINI
         private static readonly Dictionary<string, PatternType[]> Screens
     = new Dictionary<string, PatternType[]> 
@@ -89,10 +88,10 @@ namespace LeagueMaster
             public int y;
             public Color pixelColor;
 
-            public PatternType(int X, int Y, Color col)
+            public PatternType(Position.positionType pos , Color col)
             {
-                x = X;
-                y = Y;
+                x = pos.x;
+                y = pos.y;
                 pixelColor = col;
             }
         }

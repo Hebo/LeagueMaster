@@ -8,7 +8,7 @@ using System.IO;
 
 namespace LeagueMaster
 {
-    class Position
+    public class Position
     {
         public struct positionType
         {
@@ -57,23 +57,25 @@ namespace LeagueMaster
 	        {
                 resolutionDoc.Load("config\\" + _resolution + ".xml");
 	        }
-	        catch (FileNotFoundException e)
+	        catch (FileNotFoundException)
 	        {
                 Base.Write("Error: Resolution File Missing ( " + "config\\" + _resolution + ".xml )", ConsoleColor.Red);
 		        throw;
 	        }
         }
 
-        positionType GetPosition(string name)
+        public positionType Get(string name)
         {
             string xPath = @"/positions/position[@id='" + name + @"']";
             XmlNode node = resolutionDoc.SelectSingleNode(xPath);
 
-            Console.WriteLine(node.InnerXml);
-
             int x = System.Convert.ToInt32(node.ChildNodes[0].InnerText, 10);
             int y = System.Convert.ToInt32(node.ChildNodes[1].InnerText, 10);
 
+
+#if DEBUG
+            Console.WriteLine(node.InnerXml);
+#endif
             return new positionType(x, y);
         }
     }
