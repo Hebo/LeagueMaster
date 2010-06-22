@@ -50,18 +50,15 @@ namespace LeagueMaster
 
             bool actionNeeded = false;
 
-            int ticks = 0;
             while (true)
             {
                 Thread.Sleep(5000);
                 statusType oldStatus = status;
                 actionNeeded = GetStatus();
             
-                //Ticks in the event one of our clicks does not register
-                if ( ticks == 0 || ticks == 30 || !oldStatus.Equals(status) || actionNeeded)
+                if ( !oldStatus.Equals(status) || actionNeeded)
                 {
-                    if (ticks == 30) actionNeeded = GetStatus(false);
-                    else actionNeeded = GetStatus(true);
+                    actionNeeded = GetStatus(true);
       
                     //dispose of timers
                     if (afkTimer != null) afkTimer.Dispose();
@@ -71,10 +68,10 @@ namespace LeagueMaster
                     {
                         if (status.GameStatus == GameStatusType.InProgress)
                         {
-                            Base.Write("(Re)Starting Anti-AFK & Auto-Surrender in 10 seconds", ConsoleColor.White);
+                            Base.Write("Starting Anti-AFK and Auto-Surrender", ConsoleColor.White);
 
                             afkTimer = new System.Threading.Timer(AntiAfk, null, 15000, 10000);
-                            surrenderTimer = new System.Threading.Timer(AttemptSurrender, null, 35000, 35000);
+                            surrenderTimer = new System.Threading.Timer(AttemptSurrender, null, 60000, 60000);
                         }
                         else
                         { //in victory or defeat game screens
@@ -118,9 +115,7 @@ namespace LeagueMaster
                             Base.Write("Waiting on queue...");
                         }
                     }
-                   ticks = 1;
-                }
-                ticks = ticks + 1;
+               }
             }   
         }
 
