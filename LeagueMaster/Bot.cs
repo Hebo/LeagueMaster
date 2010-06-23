@@ -127,11 +127,13 @@ namespace LeagueMaster
 
         static void AttemptSurrender(object state)
         {
+#if DEBUG
             Base.Write("Attempting Surrender");
+#endif
             new InputSimulator().Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.RETURN);
-            Thread.Sleep(500);
+            Thread.Sleep(1000);
             new InputSimulator().Keyboard.TextEntry("/surrender");
-            Thread.Sleep(500);
+            Thread.Sleep(1000);
             new InputSimulator().Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.RETURN);
         }
 

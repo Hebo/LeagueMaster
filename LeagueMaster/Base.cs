@@ -17,7 +17,7 @@ namespace LeagueMaster
 
         static void Main(string[] args)
         {
-            Console.Title = "League Master";
+            Console.Title = "League Master v1.0";
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("-------------------------------");
             Console.WriteLine("League M4ster: IT'S OVER 9000");
@@ -58,7 +58,6 @@ namespace LeagueMaster
         static void Close()
         {
             oThread.Abort();
-            Console.Beep();
             Environment.Exit(0);
         }
 
