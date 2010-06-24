@@ -17,7 +17,7 @@ namespace LeagueMaster
 
         static void Main(string[] args)
         {
-            Console.Title = "League Master v1.0";
+            Console.Title = "League Master v1.1";
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("-------------------------------");
             Console.WriteLine("League M4ster: IT'S OVER 9000");

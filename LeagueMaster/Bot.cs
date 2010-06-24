@@ -76,8 +76,9 @@ namespace LeagueMaster
                         else
                         { //in victory or defeat game screens
                             Base.Write("Leaving game screen...");
-                            Bot.BringWindowToTop(Base.gameWindowName, false);
+
                             Cursor.Position = RelativePoint(gameWindowDimensions, positions.Get("end_game_button"));
+                            BringWindowToTop(Base.gameWindowName, false);
                             Thread.Sleep(1000);
                             new InputSimulator().Mouse.LeftButtonClick();
                         }
@@ -87,6 +88,7 @@ namespace LeagueMaster
                         if (status.ClientStatus == ClientStatusType.LevelUp)
                         {
                             Base.Write("Clearing popup", ConsoleColor.White);
+                            BringWindowToTop(Base.clientWindowName, true);
                             Cursor.Position = RelativePoint(clientWindowDimensions, positions.Get("level_up_button"));
                             Thread.Sleep(1000);
                             new InputSimulator().Mouse.LeftButtonClick();
@@ -122,7 +124,10 @@ namespace LeagueMaster
         static void AntiAfk(object state)
         {
               Cursor.Position = RelativePoint(gameWindowDimensions, positions.Get("anti_afk"));
-                new InputSimulator().Mouse.RightButtonClick();
+              BringWindowToTop(Base.gameWindowName, false);
+              Thread.Sleep(500);
+                
+              new InputSimulator().Mouse.RightButtonClick();
         }
 
         static void AttemptSurrender(object state)
@@ -130,6 +135,9 @@ namespace LeagueMaster
 #if DEBUG
             Base.Write("Attempting Surrender");
 #endif
+            Cursor.Position = RelativePoint(gameWindowDimensions, positions.Get("end_game_button"));
+            BringWindowToTop(Base.gameWindowName, false);
+            Thread.Sleep(500);
             new InputSimulator().Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.RETURN);
             Thread.Sleep(1000);
             new InputSimulator().Keyboard.TextEntry("/surrender");
