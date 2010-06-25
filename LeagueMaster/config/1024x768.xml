@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<positions>
+
+  <!-- Location to click ingame to avoid AFKing-->
+  <position id="anti_afk">
+    <x>551</x>
+    <y>412</y>y
+  </position>
+
+  <!-- Middle of the "Play Again" button to requeue-->
+  <position id="play_again_button">
+    <x>1160</x>
+    <y>740</y>
+  </position>
+
+  <!-- Middle of the leave game button at endgame screen-->
+  <position id="end_game_button">
+    <x>500</x>
+    <y>440</y>
+  </position>
+
+  <!-- Middle of the ok button on the level-up notification popup-->
+  <position id="level_up_button">
+    <x>640</x>
+    <y>520</y>
+  </position>
+
+  <!-- White color in the chat entry box at the post-game score screen-->
+  <position id="score_sample">
+    <x>707</x>
+    <y>700</y>
+  </position>
+
+  <!-- Grey color in the chat entry box at the post-game score screen when overlaid by level up popup-->
+  <position id="levelup_sample">
+    <x>737</x>
+    <y>700</y>
+  </position>
+
+  <!-- Gold color in the T of "Victory" at the endgame screen-->
+  <position id="victory_sample">
+    <x>692</x>
+    <y>287</y>
+  </position>
+
+  <!-- Red color in the E of "Defeat" at the endgame screen-->
+  <position id="defeat_sample">
+    <x>506</x>
+    <y>217</y>
+  </position>
+
+</positions>
