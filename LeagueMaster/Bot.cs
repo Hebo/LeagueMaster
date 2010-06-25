@@ -16,7 +16,9 @@ namespace LeagueMaster
         static RECT clientWindowDimensions;
         static IntPtr gameWindowHandle;
         static RECT gameWindowDimensions;
-        
+
+        public bool Abort { get; set; }
+
         public enum WindowStatusType { Client, Game };
         public enum GameStatusType { InProgress, Ended };
         public enum ClientStatusType { Unqueued, Queue, ScoreScreen, LevelUp };
@@ -96,6 +98,12 @@ namespace LeagueMaster
                         }
                         if (status.ClientStatus == ClientStatusType.ScoreScreen)
                         {
+                            if (Abort)
+                            {
+                                Console.Beep();
+                                Base.Write("Game Over. Aborting...");
+                                Base.Close();
+                            }
                             Base.Write("Clicking \"Play Again\" in a moment");
                             BringWindowToTop(Base.clientWindowName, true);
                             Cursor.Position = RelativePoint(clientWindowDimensions, positions.Get("play_again_button"));
@@ -105,6 +113,12 @@ namespace LeagueMaster
                         }
                         else if (status.ClientStatus == ClientStatusType.Unqueued)
                         {
+                            if (Abort)
+                            {
+                                Console.Beep();
+                                Base.Write("Game Over. Aborting...");
+                                Base.Close();
+                            }
                             Base.Write("Clicking \"Play Again\" in a moment");
                             BringWindowToTop(Base.clientWindowName, true);
                             Cursor.Position = RelativePoint(clientWindowDimensions, positions.Get("play_again_button"));
@@ -113,6 +127,12 @@ namespace LeagueMaster
                         }
                         else
                         {
+                            if (Abort)
+                            {
+                                Console.Beep();
+                                Base.Write("Game Over. Aborting...");
+                                Base.Close();
+                            }
                             //queued, do nothing but wait
                             Base.Write("Waiting on queue...");
                         }

@@ -14,6 +14,7 @@ namespace LeagueMaster
         public const string gameWindowName = "League of Legends (TM) Client";
         
         static Thread oThread;
+        static bool closing = false;
 
         static void Main(string[] args)
         {
@@ -48,15 +49,30 @@ namespace LeagueMaster
             oThread.Start();
             Thread.Sleep(1000);
 
-            Write("Press Q to quit", ConsoleColor.Yellow);
+            Write("Press A to abort after the current game ends", ConsoleColor.Yellow);
+            Write("Press Q to quit immediately", ConsoleColor.Yellow);
 
-            while (Console.ReadKey(true).Key != ConsoleKey.Q );
+            ConsoleKey key = Console.ReadKey(true).Key;
+            while (key != ConsoleKey.Q && !closing)
+            {
+                if (Console.KeyAvailable)
+                {
+                    key = Console.ReadKey(true).Key;
+                }
+                if (key == ConsoleKey.A && !myBot.Abort)
+                {
+                    myBot.Abort = true;
+                    Write("Aborting after the current game ends", ConsoleColor.White);
+                }
+                Thread.Sleep(1000);
+            }
 
             Close();
         }
       
-        static void Close()
+        public static void Close()
         {
+            closing = true;
             oThread.Abort();
             Environment.Exit(0);
         }
