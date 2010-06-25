@@ -39,8 +39,8 @@
 
   <!-- Gold color in the T of "Victory" at the endgame screen-->
   <position id="victory_sample">
-    <x>692</x>
-    <y>287</y>
+    <x>492</x>
+    <y>230</y>
   </position>
 
   <!-- Red color in the E of "Defeat" at the endgame screen-->
