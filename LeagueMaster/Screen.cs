@@ -48,14 +48,16 @@ namespace LeagueMaster
                                         }},
             {"victory", new PatternType[] { new PatternType(Bot.positions.Get("victory_sample"), Color.FromArgb(255, 244, 106)), //T in victory
     
-                                            }}, 
+                                        }}, 
             
             {"score", new PatternType[] {   new PatternType(Bot.positions.Get("score_sample"), Color.FromArgb(255, 255, 255)),
-                                            
-                                      }}, //chat input box
+                                        }}, 
+            {"score_disconnect", new PatternType[] {   new PatternType(Bot.positions.Get("score_sample"), Color.FromArgb(51, 51, 51)),
+                                        }}, //score screen if connection is lost to pvp.net chat
+
             {"levelup", new PatternType[] { new PatternType(Bot.positions.Get("levelup_sample"), Color.FromArgb(128, 128, 128)),
                                             
-                                         }}, //chat input box
+                                        }}, //chat input box
 
         };
 

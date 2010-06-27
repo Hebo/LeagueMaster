@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -18,6 +19,7 @@ namespace LeagueMaster
         static RECT gameWindowDimensions;
 
         public bool Abort { get; set; }
+        private bool _surrender;
 
         public enum WindowStatusType { Client, Game };
         public enum GameStatusType { InProgress, Ended };
@@ -36,6 +38,12 @@ namespace LeagueMaster
 
         public void BotManager()
         {
+            _surrender = Convert.ToBoolean( ConfigurationManager.AppSettings["enable_surrender"] );
+            if (_surrender)
+                Base.Write("Automatic Surrender: Enabled", ConsoleColor.White);
+            else
+                Base.Write("Automatic Surrender: Disabled", ConsoleColor.White);
+
             try
             {
                positions = new Position();
@@ -70,10 +78,17 @@ namespace LeagueMaster
                     {
                         if (status.GameStatus == GameStatusType.InProgress)
                         {
-                            Base.Write("Starting Anti-AFK and Auto-Surrender", ConsoleColor.White);
-
-                            afkTimer = new System.Threading.Timer(AntiAfk, null, 15000, 10000);
-                            surrenderTimer = new System.Threading.Timer(AttemptSurrender, null, 60000, 60000);
+                            if (_surrender)
+                            {
+                                Base.Write("Starting Anti-AFK and Auto-Surrender", ConsoleColor.White);
+                                afkTimer = new System.Threading.Timer(AntiAfk, null, 15000, 10000);
+                                surrenderTimer = new System.Threading.Timer(AttemptSurrender, null, 60000, 60000);
+                            }
+                            else
+                            {
+                                Base.Write("Starting Anti-AFK", ConsoleColor.White);
+                                afkTimer = new System.Threading.Timer(AntiAfk, null, 15000, 10000);
+                            }
                         }
                         else
                         { //in victory or defeat game screens
@@ -226,10 +241,14 @@ namespace LeagueMaster
             }
             else
             {
-                if (Screen.testScreen("score", clientWindowDimensions))
+                if (Screen.testScreen("score", clientWindowDimensions) || Screen.testScreen("score_disconnect", clientWindowDimensions))
                 {
-                    status.ClientStatus = ClientStatusType.ScoreScreen;  
-                    if (print)
+                    status.ClientStatus = ClientStatusType.ScoreScreen;
+                    if (print && Screen.testScreen("score_disconnect", clientWindowDimensions))
+                    {
+                        Base.Write("In game client: Score Screen (PVP.net chat disconnected)", ConsoleColor.White);
+                    }
+                    else if (print)
                     {
                         Base.Write("In game client: Score Screen", ConsoleColor.White);
                     }

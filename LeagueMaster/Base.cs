@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
-using System.Windows.Forms;
 using System.IO;
 
 namespace LeagueMaster
@@ -18,7 +17,7 @@ namespace LeagueMaster
 
         static void Main(string[] args)
         {
-            Console.Title = "League Master v1.1";
+            Console.Title = "League Master v1.5";
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("-------------------------------");
             Console.WriteLine("League M4ster: IT'S OVER 9000");
