@@ -28,7 +28,7 @@ namespace LeagueMaster
             //confirm lol is running
             if (!IsProcessOpen(clientName) && !IsProcessOpen(gameName))
             {
-                Write("Error: League of Legends is not open", ConsoleColor.Red);
+                Write("Error: League of Legends is closed", ConsoleColor.Red);
                 
                 ConsoleKeyInfo ck;
                 ck = Console.ReadKey(true);
@@ -40,7 +40,7 @@ namespace LeagueMaster
                 Bot.BringWindowToTop(Base.clientWindowName, true);
             }
             
-            Write("Make sure League of Legends is in queue or game");
+            Write("Ensure League of Legends is in the queue or a game");
 
             //start bot interraction process
             var myBot = new Bot();

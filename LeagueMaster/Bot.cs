@@ -283,8 +283,20 @@ namespace LeagueMaster
 
         static IntPtr GetWindowHandle( string name )
         {
-            Process[] processes = Process.GetProcessesByName(name);
-            IntPtr pFoundWindow = processes[0].MainWindowHandle;
+            Process[] processes;
+            IntPtr pFoundWindow;
+            try
+            {
+                processes = Process.GetProcessesByName(name);
+                pFoundWindow = processes[0].MainWindowHandle;
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Base.Write("Error: League of Legends is closed", ConsoleColor.Red);
+                Base.Close();
+                throw;
+            }
+
             return pFoundWindow;
         }
         
