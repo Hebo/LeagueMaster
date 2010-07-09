@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Threading;
 using System.IO;
+using System.Threading;
 
 namespace LeagueMaster
 {
@@ -92,9 +92,8 @@ namespace LeagueMaster
 
             // Write to the file:
             log.Write("[" + DateTime.Now + "] ");
-            log.WriteLine(msg);
-            
-            log.Close(); // Close the stream:
+            log.WriteLine(msg);  
+            log.Close(); // Close the stream
 
             WriteTimeStamp();
             Console.ForegroundColor = c;

@@ -180,17 +180,6 @@ namespace LeagueMaster
             new InputSimulator().Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.RETURN);
         }
 
-        // if we enter a fail state, detect it so we can recover (UNIMPLEMENTED)
-        static void DetectFailState(object state)
-        {
-            if (Screen.testScreen("itemshop", gameWindowDimensions))
-            {
-                Base.Write("Fail State: Item Shop", ConsoleColor.Yellow);
-                //recover
-                new InputSimulator().Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.ESCAPE);
-            }
-        }
-
         public static bool GetStatus( bool print = false )
         {
             bool actionNeeded = false;
@@ -304,38 +293,6 @@ namespace LeagueMaster
         {
             var abolutePoint = new Point(dimensions.Left + pos.x, dimensions.Top + pos.y);
             return abolutePoint;
-        }
-
-        //click multiple times in an area incase we miss (not used)
-        static public void FuzzyClick( bool rightClick = false )
-        {
-            
-
-                Point[] Coords = {
-                                     new Point(0, 0),
-                                     new Point(12, 0),
-                                     new Point(0, 12),
-                                     new Point(0, -12),
-                                     new Point(-12, 0),
-                                 };
-
-                foreach (var pos in Coords)
-                {
-                    Cursor.Position = new Point(Cursor.Position.X + pos.X, Cursor.Position.Y + pos.Y);
-                    Thread.Sleep(100);
-                    if (rightClick == false)
-                    {
-                    new InputSimulator().Mouse.LeftButtonClick();
-                    }
-                    else
-	{
-                new InputSimulator().Mouse.RightButtonClick();
-	}
-                    Cursor.Position = new Point(Cursor.Position.X - pos.X, Cursor.Position.Y - pos.Y);
-                }
-            
-
-            
         }
 
         #region P/Invoke
